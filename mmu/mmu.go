@@ -11,7 +11,7 @@ type MemoryManagedUnit interface {
 
 type MMU struct {
 	cart cartridge.Cartridge // 0x0000-0x3FFF
-	bios [256]byte // 0x0000-0x00FF
+	bios [256]byte           // 0x0000-0x00FF
 }
 
 // Read a byte from memory

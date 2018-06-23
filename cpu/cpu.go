@@ -65,3 +65,5 @@ func NewCPU() *Z80 {
 	ResetCPU(cpu)
 	return cpu
 }
+
+// TODO: Implement cpu ops codes next with functions
