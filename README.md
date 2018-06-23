@@ -1,7 +1,15 @@
 # GameBoy Go
 
-A GameBoy emulator written in Golang.
+A Game Boy emulator written in Golang.
 
 ## How to build
 
+```
+go build
+```
+
 ## How to run
+
+```
+./gameboy-go
+```
