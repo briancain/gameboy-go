@@ -86,5 +86,17 @@ func DisplayClock(cpu Z80) string {
 
 // TODO: Implement cpu ops codes next with functions
 
-func NOP() {
+func NOP(cpu *Z80) {
+	cpu.clock.m = 1
+	cpu.clock.t = 4
+}
+
+func HALT(cpu *Z80) {
+	cpu.clock.m = 1
+	cpu.clock.t = 4
+}
+
+func STOP(cpu *Z80) {
+	cpu.clock.m = 1
+	cpu.clock.t = 4
 }
