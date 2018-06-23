@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
 	log.Print("Starting gameboy-go ... ")
 	version := version.Get()
 	log.Print("Version loaded: ", version)
