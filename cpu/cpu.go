@@ -50,8 +50,12 @@ func ResetCPU(cpu *Z80) {
 }
 
 func DisplayCPUFrame(cpu Z80) string {
-	return fmt.Sprintf("A: %X\nB: %X\nC: %X\nD: %X\nE: %X\nF: %X",
-		cpu.reg.A, cpu.reg.B, cpu.reg.C, cpu.reg.D, cpu.reg.E, cpu.reg.F)
+	return fmt.Sprintf("A:  %X\nB:  %X\nC:  %X\nD:  %X\nE:  %X\nF:  %X\nPC: %X\nSP: %X",
+		cpu.reg.A, cpu.reg.B, cpu.reg.C, cpu.reg.D, cpu.reg.E, cpu.reg.F, cpu.reg.PC, cpu.reg.SP)
+}
+
+func DisplayClock(cpu Z80) string {
+	return fmt.Sprintf("M: %X\nT: %X", cpu.clock.m, cpu.clock.t)
 }
 
 func NewCPU() *Z80 {

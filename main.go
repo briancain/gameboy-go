@@ -13,4 +13,6 @@ func main() {
 	gbcpu := cpu.NewCPU()
 	display := cpu.DisplayCPUFrame(*gbcpu)
 	log.Print("CPU Frame:\n", display)
+	clockdisplay := cpu.DisplayClock(*gbcpu)
+	log.Print("CPU Clock:\n", clockdisplay)
 }
