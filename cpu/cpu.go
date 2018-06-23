@@ -8,9 +8,10 @@ import (
 
 // Game Boy cpu type Z80
 type Z80 struct {
-	reg   Registers
-	clock Clock
-	m     mmu.MemoryManagedUnit
+	reg    Registers
+	clock  Clock
+	m      mmu.MemoryManagedUnit
+	halted bool
 }
 
 type Registers struct {
@@ -57,6 +58,7 @@ func ResetCPU(cpu *Z80) {
 	cpu.reg.PC = 0
 	cpu.reg.SP = 0
 	ResetClock(&cpu.reg.LastInstructionClock)
+	cpu.halted = false
 }
 
 func NewCPU() *Z80 {
