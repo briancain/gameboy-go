@@ -78,10 +78,11 @@ func DisplayClock(cpu Z80) string {
 	return fmt.Sprintf("M: %X\nT: %X", cpu.clock.m, cpu.clock.t)
 }
 
-func NewCPU() *Z80 {
-	cpu := new(Z80)
-	ResetCPU(cpu)
-	return cpu
-}
+// ************************************
+// Opscode Functions
+// ************************************
 
 // TODO: Implement cpu ops codes next with functions
+
+func NOP() {
+}
