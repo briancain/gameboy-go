@@ -6,6 +6,13 @@ import (
 	"log"
 )
 
+// Game Boy cpu type Z80
+type Z80 struct {
+	reg   Registers
+	clock Clock
+	m     mmu.MemoryManagedUnit
+}
+
 type Registers struct {
 	// 8-bit registers
 	A byte
@@ -25,12 +32,13 @@ type Clock struct {
 	t byte
 }
 
-// Game Boy cpu type Z80
-type Z80 struct {
-	reg   Registers
-	clock Clock
-	m     mmu.MemoryManagedUnit
-}
+// Flags
+const (
+	zero      = 0x80
+	operation = 0x40
+	halfcarry = 0x20
+	carry     = 0x10
+)
 
 func ResetClock(clock *Clock) {
 	log.Print("[DEBUG] Resetting clock")
@@ -50,6 +58,16 @@ func ResetCPU(cpu *Z80) {
 	cpu.reg.SP = 0
 	ResetClock(&cpu.reg.LastInstructionClock)
 }
+
+func NewCPU() *Z80 {
+	cpu := new(Z80)
+	ResetCPU(cpu)
+	return cpu
+}
+
+// ************************************
+// Debug Functions
+// ************************************
 
 func DisplayCPUFrame(cpu Z80) string {
 	return fmt.Sprintf("A:  %X\nB:  %X\nC:  %X\nD:  %X\nE:  %X\nF:  %X\nPC: %X\nSP: %X",
