@@ -37,6 +37,7 @@ func ResetClock(clock *Clock) {
 }
 
 func ResetCPU(cpu *Z80) {
+	log.Print("[DEBUG] Resetting CPU")
 	cpu.reg.A = 0
 	cpu.reg.B = 0
 	cpu.reg.C = 0
