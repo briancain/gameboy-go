@@ -18,7 +18,7 @@ func main() {
 	}
 	log.SetOutput(filter)
 
-	log.Print("gameboy-go starting... ")
+	log.Print("Starting gameboy-go ... ")
 	version := version.Get()
 	log.Print("Version loaded: ", version)
 }
