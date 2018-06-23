@@ -23,6 +23,12 @@ type Clock struct {
 	t byte
 }
 
+// Game Boy cpu type Z80
+type Z80 struct {
+  regiesters Registers
+  clock Clock
+}
+
 func Display() string {
 	return "Hello"
 }
