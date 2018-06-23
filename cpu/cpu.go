@@ -2,6 +2,7 @@ package cpu
 
 import (
 	"fmt"
+	"github.com/briancain/gameboy-go/mmu"
 	"log"
 )
 
@@ -28,6 +29,7 @@ type Clock struct {
 type Z80 struct {
 	reg   Registers
 	clock Clock
+	m     mmu.MemoryManagedUnit
 }
 
 func ResetClock(clock *Clock) {
