@@ -5,7 +5,7 @@ A Game Boy emulator written in Golang.
 ## How to build
 
 ```
-go build
+make build
 ```
 
 ## How to run
