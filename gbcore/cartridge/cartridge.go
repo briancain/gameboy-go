@@ -10,7 +10,26 @@ type Cartridge struct {
 
 	// raw byte stream of ROM data
 	rom []byte
+
+	// the type of cartridge it is
+	cartType CartridgeType
 }
+
+type CartridgeType int
+
+// TODO(briancain): Extract existing defined byte strings for each
+// cart type and associate it with internal CartridgeType const
+var cartTypeMap = map[byte]string{}
+
+const (
+	RomOnly CartridgeType = iota // 32kb ROM
+	MBC1                         // Memory Bank Controller 1
+	MBC2
+	MBC3
+	MBC5
+	RumbleCart // Uses a MBC5 memory bank controller
+	HuC1       // Infrared LED input/output
+)
 
 func (c *Cartridge) OpenFile() {
 	log.Print("Loading cartridge from file path ", c.filePath)
