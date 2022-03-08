@@ -22,7 +22,7 @@ func init() {
 func startServer() error {
 	loadGBCore()
 
-	// spin up a server and accept inputs
+	// TODO(briancain): spin up a server for display and accept inputs
 	return nil
 }
 
