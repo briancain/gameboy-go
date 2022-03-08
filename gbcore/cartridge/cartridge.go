@@ -22,13 +22,13 @@ type CartridgeType int
 var cartTypeMap = map[byte]string{}
 
 const (
-	RomOnly CartridgeType = iota // 32kb ROM
-	MBC1                         // Memory Bank Controller 1
-	MBC2
-	MBC3
-	MBC5
-	RumbleCart // Uses a MBC5 memory bank controller
-	HuC1       // Infrared LED input/output
+	RomOnly    CartridgeType = iota // 32kb ROM
+	MBC1                            // Memory Bank Controller 1
+	MBC2                            // Memory Bank Controller 2
+	MBC3                            // Memory Bank Controller 3
+	MBC5                            // Memory Bank Controller 5
+	RumbleCart                      // Uses a MBC5 memory bank controller
+	HuC1                            // Infrared LED input/output
 )
 
 func (c *Cartridge) OpenFile() {
