@@ -5,13 +5,14 @@ import (
 )
 
 type Cartridge struct {
-	title string
+	title    string
+	filePath string
 }
 
-func OpenFile(filePath string) {
-	log.Print("Loading cartridge from file path ", filePath)
+func (c *Cartridge) OpenFile() {
+	log.Print("Loading cartridge from file path ", c.filePath)
 }
 
 func NewCartridge(cartPath string) (*Cartridge, error) {
-	return nil, nil
+	return &Cartridge{title: "", filePath: cartPath}, nil
 }

@@ -2,8 +2,9 @@ package cpu
 
 import (
 	"fmt"
-	"github.com/briancain/gameboy-go/mmu"
 	"log"
+
+	"github.com/briancain/gameboy-go/mmu"
 )
 
 // Game Boy cpu type Z80
@@ -41,13 +42,15 @@ const (
 	carry     = 0x10
 )
 
-func ResetClock(clock *Clock) {
+func (cpu *Z80) ResetClock() error {
 	log.Print("[DEBUG] Resetting clock")
-	clock.m = 0
-	clock.t = 0
+	cpu.clock.m = 0
+	cpu.clock.t = 0
+
+	return nil
 }
 
-func ResetCPU(cpu *Z80) {
+func (cpu *Z80) ResetCPU() error {
 	log.Print("[DEBUG] Resetting CPU")
 	cpu.reg.A = 0
 	cpu.reg.B = 0
@@ -57,14 +60,20 @@ func ResetCPU(cpu *Z80) {
 	cpu.reg.F = 0
 	cpu.reg.PC = 0
 	cpu.reg.SP = 0
-	ResetClock(&cpu.reg.LastInstructionClock)
+
+	cpu.ResetClock()
 	cpu.halted = false
+
+	return nil
 }
 
-func NewCPU() *Z80 {
-	cpu := new(Z80)
-	ResetCPU(cpu)
-	return cpu
+func NewCPU() (*Z80, error) {
+	cpu := &Z80{}
+	if err := cpu.ResetCPU(); err != nil {
+		return nil, err
+	}
+
+	return cpu, nil
 }
 
 // ************************************

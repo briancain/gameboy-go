@@ -7,4 +7,4 @@ VERSION:=$(shell cat $(VERSION_FILE))
 default: build
 
 build:
-	go build -o ${BINARY}
+	go build -o bin/${BINARY}

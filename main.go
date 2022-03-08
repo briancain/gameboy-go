@@ -1,16 +1,22 @@
 package main
 
 import (
-	"github.com/briancain/gameboy-go/cpu"
-	"github.com/briancain/gameboy-go/version"
 	"log"
+
+	cpu "github.com/briancain/gameboy-go/cpu"
+	"github.com/briancain/gameboy-go/version"
 )
 
 func main() {
 	log.Print("Starting gameboy-go ... ")
 	version := version.Get()
 	log.Print("Version loaded: ", version)
-	gbcpu := cpu.NewCPU()
+
+	gbcpu, err := cpu.NewCPU()
+	if err != nil {
+		log.Print("Failed to initialize CPU: ", err)
+	}
+
 	display := cpu.DisplayCPUFrame(*gbcpu)
 	log.Print("CPU Frame:\n", display)
 	clockdisplay := cpu.DisplayClock(*gbcpu)

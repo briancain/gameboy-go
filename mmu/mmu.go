@@ -1,8 +1,9 @@
 package mmu
 
 import (
-	"github.com/briancain/gameboy-go/cartridge"
 	"log"
+
+	"github.com/briancain/gameboy-go/cartridge"
 )
 
 type MemoryManagedUnit interface {
@@ -15,18 +16,19 @@ type MMU struct {
 }
 
 // Read a byte from memory
-func ReadBytes(addr byte) {
-
+func ReadBytes(addr byte) error {
+	return nil
 }
 
 // Read a 16-bit word
-func ReadWord(addr byte) {
-
+func ReadWord(addr byte) error {
+	return nil
 }
 
-func LoadCart() {
+func (m *MMU) LoadCart() error {
+	return nil
 }
 
-func Reset(m *MMU) {
+func (m *MMU) Reset() {
 	log.Print("Resetting MMU")
 }
