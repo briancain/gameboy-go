@@ -7,6 +7,9 @@ import (
 type Cartridge struct {
 	title    string
 	filePath string
+
+	// raw byte stream of ROM data
+	rom []byte
 }
 
 func (c *Cartridge) OpenFile() {

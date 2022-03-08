@@ -3,15 +3,12 @@ package gbcore
 import (
 	"fmt"
 	"log"
-
-	gbcore "github.com/briancain/gameboy-go/gbcore/mmu"
 )
 
 // Game Boy cpu type Z80
 type Z80 struct {
 	reg    Registers
 	clock  Clock
-	m      gbcore.MemoryManagedUnit
 	halted bool
 }
 
@@ -23,6 +20,7 @@ type Registers struct {
 	D byte
 	E byte
 	F byte // Flag register
+
 	// 16-bit registers
 	PC                   byte // Program Counter
 	SP                   byte // Stack Pointer
@@ -68,6 +66,8 @@ func (cpu *Z80) ResetCPU() error {
 }
 
 func NewCPU() (*Z80, error) {
+	log.Println("[Core] Initializing a new Z80 CPU ...")
+
 	cpu := &Z80{}
 	if err := cpu.ResetCPU(); err != nil {
 		return nil, err
