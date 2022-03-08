@@ -1,17 +1,17 @@
-package cpu
+package gbcore
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/briancain/gameboy-go/mmu"
+	gbcore "github.com/briancain/gameboy-go/gbcore/mmu"
 )
 
 // Game Boy cpu type Z80
 type Z80 struct {
 	reg    Registers
 	clock  Clock
-	m      mmu.MemoryManagedUnit
+	m      gbcore.MemoryManagedUnit
 	halted bool
 }
 

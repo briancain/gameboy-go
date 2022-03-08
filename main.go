@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	cpu "github.com/briancain/gameboy-go/cpu"
+	cpu "github.com/briancain/gameboy-go/gbcore/cpu"
 	version "github.com/briancain/gameboy-go/version"
 )
 
@@ -43,4 +43,6 @@ func main() {
 	if Help {
 		flag.Usage()
 	}
+
+	startServer()
 }
