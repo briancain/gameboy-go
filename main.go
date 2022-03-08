@@ -26,9 +26,9 @@ func startServer() error {
 		os.Exit(1)
 	}
 
-	display := cpu.DisplayCPUFrame(*gbcpu)
+	display := gbcpu.DisplayCPUFrame()
 	log.Print("CPU Frame:\n", display)
-	clockdisplay := cpu.DisplayClock(*gbcpu)
+	clockdisplay := gbcpu.DisplayClock()
 	log.Print("CPU Clock:\n", clockdisplay)
 
 	return nil
