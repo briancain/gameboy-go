@@ -20,9 +20,20 @@ func init() {
 }
 
 func startServer() error {
+	loadGBCore()
+
+	// spin up a server and accept inputs
+	return nil
+}
+
+func loadGBCore() error {
 	gbcpu, err := gbcore.NewGameBoyCore()
 	if err != nil {
-		log.Print("Failed to initialize CPU: ", err)
+		log.Print("Failed to create new gbcore: ", err)
+		os.Exit(1)
+	}
+	if err := gbcpu.Init(CartridgePath); err != nil {
+		log.Print("[ERROR] Failed to initialize new gbcore!\n", err)
 		os.Exit(1)
 	}
 
@@ -42,6 +53,11 @@ func main() {
 	flag.Parse()
 	if Help {
 		flag.Usage()
+	}
+	if CartridgePath == "" {
+		log.Println("! ERROR: You must define a cartridge ROM file path with '-rom-file'\n")
+		flag.Usage()
+		os.Exit(1)
 	}
 
 	startServer()

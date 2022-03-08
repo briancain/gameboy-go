@@ -17,28 +17,36 @@ type GameBoyCore struct {
 	Mmu   mmu.MemoryManagedUnit
 	Sound sound.Sound
 
-	// If set to true, will exit on the next frame
-	Exit bool
-
 	// Speed options
 	FPS int
 
-	Cartridge cart.Cartridge
+	Cartridge *cart.Cartridge
 
 	Controller controller.Controller
+
+	// Private vars?
+
+	// If set to true, will exit on the next frame
+	exit bool
 }
 
 func NewGameBoyCore() (*GameBoyCore, error) {
 	return &GameBoyCore{}, nil
 }
 
-func (gb *GameBoyCore) Init() error {
+func (gb *GameBoyCore) Init(cartPath string) error {
 	// Initialize core components
 
 	// Initialize and read cartridge file
+	crt, err := cart.NewCartridge(cartPath)
+	if err != nil {
+		return err
+	} else {
+		gb.Cartridge = crt
+	}
 
 	// Initialize hardware controller
-	gb.Controller.Init()
+	//gb.Controller.Init()
 
 	return nil
 }
@@ -52,7 +60,7 @@ func (gb *GameBoyCore) Run() error {
 		// Process controller input
 		gb.Controller.Update()
 
-		if gb.Exit {
+		if gb.exit {
 			log.Println("[Core] Exiting emulator ...")
 			// shut down any services here
 			return nil

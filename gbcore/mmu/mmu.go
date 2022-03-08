@@ -3,7 +3,7 @@ package gbcore
 import (
 	"log"
 
-	gbcore "github.com/briancain/gameboy-go/gbcore/cartridge"
+	cart "github.com/briancain/gameboy-go/gbcore/cartridge"
 )
 
 type MemoryManagedUnit interface {
@@ -11,8 +11,8 @@ type MemoryManagedUnit interface {
 }
 
 type MMU struct {
-	cart gbcore.Cartridge // 0x0000-0x3FFF
-	bios [256]byte        // 0x0000-0x00FF
+	cart cart.Cartridge // 0x0000-0x3FFF
+	bios [256]byte      // 0x0000-0x00FF
 }
 
 // Read a byte from memory

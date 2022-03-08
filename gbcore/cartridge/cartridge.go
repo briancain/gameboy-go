@@ -1,7 +1,10 @@
 package gbcore
 
 import (
+	"errors"
+	"fmt"
 	"log"
+	"os"
 )
 
 type Cartridge struct {
@@ -35,6 +38,13 @@ func (c *Cartridge) LoadCartridge() {
 	log.Print("Loading cartridge from file path ", c.filePath)
 }
 
-func NewCartridge(title string, cartPath string) (*Cartridge, error) {
-	return &Cartridge{title: title, filePath: cartPath}, nil
+func NewCartridge(cartPath string) (*Cartridge, error) {
+	log.Println("[DEBUG] loading cart from path ", cartPath)
+
+	if _, err := os.Stat(cartPath); err != nil {
+		return nil, errors.New(
+			fmt.Sprintf("The ROM file at %q does not exist on the file system", cartPath))
+	}
+	// we'll load cart title directly from the ROM data on init
+	return &Cartridge{title: "", filePath: cartPath}, nil
 }
