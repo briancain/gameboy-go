@@ -1,5 +1,7 @@
 package gbcore
 
+import "github.com/briancain/gameboy-go/controller/controller"
+
 // Core emulator implementation
 type GameBoyCore struct {
 	// Core gameboy components
@@ -8,6 +10,8 @@ type GameBoyCore struct {
 	Sound Sound
 
 	Cartridge Cartridge
+
+	Controller controller.Controller
 }
 
 func (gb *GameBoyCore) Init() error {
