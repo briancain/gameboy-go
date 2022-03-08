@@ -6,10 +6,13 @@ import (
 )
 
 // Game Boy cpu type Z80
+// Z80 Manual (http://www.zilog.com/docs/z80/um0080.pdf)
 type Z80 struct {
 	reg    Registers
 	clock  Clock
 	halted bool
+
+	interruptEnabled bool
 }
 
 type Registers struct {
@@ -94,18 +97,20 @@ func (cpu *Z80) DisplayClock() string {
 // ************************************
 
 // TODO: Implement cpu ops codes next with functions
+// https://gbdev.io/gb-opcodes/optables/
+// TODO: move this into its own component?
 
-func NOP(cpu *Z80) {
+func (cpu *Z80) NOP() {
 	cpu.clock.m = 1
 	cpu.clock.t = 4
 }
 
-func HALT(cpu *Z80) {
+func (cpu *Z80) HALT() {
 	cpu.clock.m = 1
 	cpu.clock.t = 4
 }
 
-func STOP(cpu *Z80) {
+func (cpu *Z80) STOP() {
 	cpu.clock.m = 1
 	cpu.clock.t = 4
 }

@@ -31,7 +31,7 @@ const (
 	HuC1                            // Infrared LED input/output
 )
 
-func (c *Cartridge) OpenFile() {
+func (c *Cartridge) LoadCartridge() {
 	log.Print("Loading cartridge from file path ", c.filePath)
 }
 

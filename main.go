@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	cpu "github.com/briancain/gameboy-go/gbcore/cpu"
+	gbcore "github.com/briancain/gameboy-go/gbcore"
 	version "github.com/briancain/gameboy-go/version"
 )
 
@@ -20,15 +20,15 @@ func init() {
 }
 
 func startServer() error {
-	gbcpu, err := cpu.NewCPU()
+	gbcpu, err := gbcore.NewGameBoyCore()
 	if err != nil {
 		log.Print("Failed to initialize CPU: ", err)
 		os.Exit(1)
 	}
 
-	display := gbcpu.DisplayCPUFrame()
+	display := gbcpu.Cpu.DisplayCPUFrame()
 	log.Print("CPU Frame:\n", display)
-	clockdisplay := gbcpu.DisplayClock()
+	clockdisplay := gbcpu.Cpu.DisplayClock()
 	log.Print("CPU Clock:\n", clockdisplay)
 
 	return nil
