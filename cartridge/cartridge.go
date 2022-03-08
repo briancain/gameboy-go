@@ -13,6 +13,6 @@ func (c *Cartridge) OpenFile() {
 	log.Print("Loading cartridge from file path ", c.filePath)
 }
 
-func NewCartridge(cartPath string) (*Cartridge, error) {
-	return &Cartridge{title: "", filePath: cartPath}, nil
+func NewCartridge(title string, cartPath string) (*Cartridge, error) {
+	return &Cartridge{title: title, filePath: cartPath}, nil
 }
