@@ -48,6 +48,11 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 		gb.Cartridge = crt
 	}
 
+	// Load the cartridge rom file from disk
+	if err := crt.LoadCartridge(); err != nil {
+		return err
+	}
+
 	// Initialize hardware controller
 	gb.Controller = controller.Keyboard{Name: "Keyboard"}
 	gb.Controller.Init()

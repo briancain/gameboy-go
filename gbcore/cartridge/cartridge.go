@@ -1,6 +1,7 @@
 package gbcore
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"log"
@@ -34,9 +35,36 @@ const (
 	HuC1                            // Infrared LED input/output
 )
 
-func (c *Cartridge) LoadCartridge() {
+func (c *Cartridge) LoadCartridge() error {
 	log.Println("[DEBUG] loading cart from path ", c.filePath)
 	// Load file on path and read bytes into memory
+
+	romFile, err := os.Open(c.filePath)
+	if err != nil {
+		return err
+	}
+	defer romFile.Close()
+
+	stats, err := romFile.Stat()
+	if err != nil {
+		return err
+	}
+
+	size := stats.Size()
+	bytes := make([]byte, size)
+
+	bufReader := bufio.NewReader(romFile)
+	_, err = bufReader.Read(bytes)
+	if err != nil {
+		return err
+	}
+
+	c.rom = bytes
+
+	log.Println("[DEBUG] Loaded rom file of size", size, "bytes.")
+	// TODO(briancain): a function to read the title and cart type from the byte stream?
+
+	return nil
 }
 
 func NewCartridge(cartPath string) (*Cartridge, error) {
