@@ -17,8 +17,12 @@ type Cartridge struct {
 
 	// the type of cartridge it is
 	cartType byte
+
+	// optional, only if ROM has additional RAM support
+	ramSize byte
 }
 
+// https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type
 var cartridgeTypeMap = map[byte]string{
 	byte(0x00): "ROM ONLY",
 	byte(0x01): "MBC1",
@@ -51,6 +55,7 @@ var cartridgeTypeMap = map[byte]string{
 	byte(0xFF): "HuC1+RAM+BATTERY",
 }
 
+// Reference https://gbdev.io/pandocs/The_Cartridge_Header.html
 func (c *Cartridge) LoadCartridge() error {
 	log.Println("[DEBUG] Loading cart from path:", c.filePath)
 	// Load file on path and read bytes into memory
