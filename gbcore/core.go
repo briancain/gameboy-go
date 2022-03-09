@@ -7,6 +7,7 @@ import (
 	cart "github.com/briancain/gameboy-go/gbcore/cartridge"
 	cpu "github.com/briancain/gameboy-go/gbcore/cpu"
 	mmu "github.com/briancain/gameboy-go/gbcore/mmu"
+	snapshot "github.com/briancain/gameboy-go/gbcore/snapshot"
 	sound "github.com/briancain/gameboy-go/gbcore/sound"
 )
 
@@ -23,6 +24,8 @@ type GameBoyCore struct {
 	Cartridge *cart.Cartridge
 
 	Controller controller.Controller
+
+	Snapshots []snapshot.Snapshot
 
 	// Private vars?
 
@@ -70,5 +73,10 @@ func (gb *GameBoyCore) Run() error {
 
 // Update is the core game loop function
 func (gb *GameBoyCore) Update() error {
+	return nil
+}
+
+// Takes a snapshot of the current state of the sytem that can be loaded later
+func (gb *GameBoyCore) SaveState() error {
 	return nil
 }
