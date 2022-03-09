@@ -96,6 +96,10 @@ func (cpu *Z80) DisplayClock() string {
 // Opscode Functions
 // ************************************
 
+func (cpu *Z80) ExecuteOpCode(code byte) error {
+	return nil
+}
+
 // TODO: Implement cpu ops codes next with functions
 // https://gbdev.io/gb-opcodes/optables/
 // TODO: move this into its own component?
