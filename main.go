@@ -27,20 +27,17 @@ func startServer() error {
 }
 
 func loadGBCore() error {
-	gbcpu, err := gbcore.NewGameBoyCore()
+	gb, err := gbcore.NewGameBoyCore()
 	if err != nil {
 		log.Print("Failed to create new gbcore: ", err)
 		os.Exit(1)
 	}
-	if err := gbcpu.Init(CartridgePath); err != nil {
+	if err := gb.Init(CartridgePath); err != nil {
 		log.Print("[ERROR] Failed to initialize new gbcore!\n", err)
 		os.Exit(1)
 	}
 
-	display := gbcpu.Cpu.DisplayCPUFrame()
-	log.Print("CPU Frame:\n", display)
-	clockdisplay := gbcpu.Cpu.DisplayClock()
-	log.Print("CPU Clock:\n", clockdisplay)
+	gb.Run()
 
 	return nil
 }

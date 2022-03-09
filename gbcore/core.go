@@ -49,7 +49,13 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	}
 
 	// Initialize hardware controller
-	//gb.Controller.Init()
+	gb.Controller = controller.Keyboard{Name: "Keyboard"}
+	gb.Controller.Init()
+
+	display := gb.Cpu.DisplayCPUFrame()
+	log.Print("[DEBUG] CPU Frame:\n", display)
+	clockdisplay := gb.Cpu.DisplayClock()
+	log.Print("[DEBUG] CPU Clock:\n", clockdisplay)
 
 	return nil
 }
@@ -73,6 +79,7 @@ func (gb *GameBoyCore) Run() error {
 
 // Update is the core game loop function
 func (gb *GameBoyCore) Update() error {
+	gb.exit = true
 	return nil
 }
 
