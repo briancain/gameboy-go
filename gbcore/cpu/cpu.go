@@ -15,14 +15,24 @@ type Z80 struct {
 	interruptEnabled bool
 }
 
+// Each struct value A-H is an 8-bit register
+// Grouped together, they can form 16 bit registers
 type Registers struct {
 	// 8-bit registers
-	A byte
-	B byte
-	C byte
-	D byte
-	E byte
+
+	// Accumulator & Flags
+	A byte // Hi register
 	F byte // Flag register
+
+	// BC
+	B byte // Hi register
+	C byte // Lo register
+
+	D byte // Hi
+	E byte // Lo
+
+	L byte // Hi
+	H byte // Lo
 
 	// 16-bit registers
 	PC                   byte // Program Counter
@@ -30,18 +40,18 @@ type Registers struct {
 	LastInstructionClock Clock
 }
 
-type Clock struct {
-	m byte
-	t byte
-}
-
-// Flags
+// Flag register values
 const (
 	zero      = 0x80
 	operation = 0x40
 	halfcarry = 0x20
 	carry     = 0x10
 )
+
+type Clock struct {
+	m byte
+	t byte
+}
 
 func (cpu *Z80) ResetClock() error {
 	log.Print("[DEBUG] Resetting clock")
@@ -59,6 +69,9 @@ func (cpu *Z80) ResetCPU() error {
 	cpu.reg.D = 0
 	cpu.reg.E = 0
 	cpu.reg.F = 0
+	cpu.reg.L = 0
+	cpu.reg.H = 0
+
 	cpu.reg.PC = 0
 	cpu.reg.SP = 0
 
