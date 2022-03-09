@@ -12,11 +12,13 @@ import (
 var (
 	CartridgePath string
 	Help          bool
+	DebugOutput   bool
 )
 
 func init() {
 	flag.BoolVar(&Help, "help", false, "Displays help")
 	flag.StringVar(&CartridgePath, "rom-file", "", "A path to a cartridge ROM file")
+	flag.BoolVar(&DebugOutput, "debug", false, "Displays debug output")
 }
 
 func startServer() error {
@@ -27,7 +29,7 @@ func startServer() error {
 }
 
 func loadGBCore() error {
-	gb, err := gbcore.NewGameBoyCore()
+	gb, err := gbcore.NewGameBoyCore(DebugOutput)
 	if err != nil {
 		log.Print("Failed to create new gbcore: ", err)
 		os.Exit(1)

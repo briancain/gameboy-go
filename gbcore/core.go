@@ -30,11 +30,12 @@ type GameBoyCore struct {
 	// Private vars?
 
 	// If set to true, will exit on the next frame
-	exit bool
+	exit  bool
+	debug bool
 }
 
-func NewGameBoyCore() (*GameBoyCore, error) {
-	return &GameBoyCore{}, nil
+func NewGameBoyCore(debug bool) (*GameBoyCore, error) {
+	return &GameBoyCore{debug: debug}, nil
 }
 
 func (gb *GameBoyCore) Init(cartPath string) error {
@@ -57,17 +58,20 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	gb.Controller = controller.Keyboard{Name: "Keyboard"}
 	gb.Controller.Init()
 
-	display := gb.Cpu.DisplayCPUFrame()
-	log.Print("[DEBUG] CPU Frame:\n", display)
-	clockdisplay := gb.Cpu.DisplayClock()
-	log.Print("[DEBUG] CPU Clock:\n", clockdisplay)
-
 	return nil
 }
 
 // Run runs the main emulator loop by progressing the CPU tick
 func (gb *GameBoyCore) Run() error {
 	for {
+		// debug
+		if gb.debug {
+			display := gb.Cpu.DisplayCPUFrame()
+			log.Print("[DEBUG] CPU Frame:\n", display)
+			clockdisplay := gb.Cpu.DisplayClock()
+			log.Print("[DEBUG] CPU Clock:\n", clockdisplay)
+		}
+
 		// Update CPU Tick Frame
 		gb.Update()
 

@@ -36,7 +36,7 @@ const (
 )
 
 func (c *Cartridge) LoadCartridge() error {
-	log.Println("[DEBUG] loading cart from path ", c.filePath)
+	log.Println("[DEBUG] Loading cart from path:", c.filePath)
 	// Load file on path and read bytes into memory
 
 	romFile, err := os.Open(c.filePath)
