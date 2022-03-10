@@ -109,6 +109,8 @@ func (cpu *Z80) DisplayClock() string {
 // Opscode Functions
 // ************************************
 
+// http://gameboy.mongenel.com/dmg/opcodes.html
+
 func (cpu *Z80) ExecuteOpCode(code byte) error {
 	return nil
 }
@@ -117,17 +119,13 @@ func (cpu *Z80) ExecuteOpCode(code byte) error {
 // https://gbdev.io/gb-opcodes/optables/
 // TODO: move this into its own component?
 
+// 0x00
 func (cpu *Z80) NOP() {
-	cpu.clock.m = 1
-	cpu.clock.t = 4
+	// do nothing
 }
 
 func (cpu *Z80) HALT() {
-	cpu.clock.m = 1
-	cpu.clock.t = 4
 }
 
 func (cpu *Z80) STOP() {
-	cpu.clock.m = 1
-	cpu.clock.t = 4
 }
