@@ -12,17 +12,19 @@ type Cartridge struct {
 	title    string
 	filePath string
 
-	// raw byte stream of ROM data
-	rom []byte
-
 	// the type of cartridge it is
 	cartType byte
 
-	// optional, only if ROM has additional RAM support
-	ramSize byte
-
 	// Memory Controller Bank implementation
 	MBC MBC
+
+	// TODO move rom and ram information into MBC
+
+	// raw byte stream of ROM data
+	rom []byte
+
+	// optional, only if ROM has additional RAM support
+	ramSize byte
 }
 
 // Reference https://gbdev.io/pandocs/The_Cartridge_Header.html
@@ -85,11 +87,16 @@ func NewCartridge(cartPath string) (*Cartridge, error) {
 
 /*
 * Memory Bank Controller implementations .... lol there's a lot to do here
+*
+* Realistically most games are either MBC1, MBC3, or MBC5 so lets start with these.
  */
 
 // A generic Memory Bank Controller interface.
 type MBC interface {
 	ReadRom(uint16) (byte, error)
+
+	ReadRam(uint16) (byte, error)
+	WriteRam(uint16, byte) error
 }
 
 // https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type
