@@ -2,8 +2,6 @@ package gbcore
 
 import (
 	"log"
-
-	cart "github.com/briancain/gameboy-go/gbcore/cartridge"
 )
 
 type MemoryManagedUnit interface {
@@ -11,18 +9,18 @@ type MemoryManagedUnit interface {
 }
 
 type MMU struct {
-	cart cart.Cartridge // 0x0000-0x3FFF
-	bios [256]byte      // 0x0000-0x00FF
+	MemoryMap []byte
+	bios      [256]byte // 0x0000-0x00FF
 }
 
 // Read a byte from memory
-func ReadBytes(addr byte) error {
-	return nil
+func (m *MMU) ReadBytes(addr byte) (byte, error) {
+	return m.MemoryMap[addr], nil
 }
 
 // Read a 16-bit word
-func ReadWord(addr byte) error {
-	return nil
+func ReadWord(addr byte) (byte, error) {
+	return 0, nil
 }
 
 func (m *MMU) LoadCart() error {

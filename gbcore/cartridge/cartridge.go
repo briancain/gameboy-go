@@ -20,39 +20,9 @@ type Cartridge struct {
 
 	// optional, only if ROM has additional RAM support
 	ramSize byte
-}
 
-// https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type
-var cartridgeTypeMap = map[byte]string{
-	byte(0x00): "ROM ONLY",
-	byte(0x01): "MBC1",
-	byte(0x02): "MBC1+RAM",
-	byte(0x03): "MBC1+RAM+BATTERY",
-	byte(0x05): "MBC2",
-	byte(0x06): "MBC2+BATTERY",
-	byte(0x08): "ROM+RAM",
-	byte(0x09): "ROM+RAM+BATTERY",
-	byte(0x0B): "MMM01",
-	byte(0x0C): "MMM01+RAM",
-	byte(0x0D): "MMM01+RAM+BATTERY",
-	byte(0x0F): "MBC3+TIMER+BATTERY",
-	byte(0x10): "MBC3+TIMER+RAM+BATTERY",
-	byte(0x11): "MBC3",
-	byte(0x12): "MBC3+RAM",
-	byte(0x13): "MBC3+RAM+BATTERY",
-	byte(0x15): "MBC4",
-	byte(0x16): "MBC4+RAM",
-	byte(0x17): "MBC4+RAM+BATTERY",
-	byte(0x19): "MBC5",
-	byte(0x1A): "MBC5+RAM",
-	byte(0x1B): "MBC5+RAM+BATTERY",
-	byte(0x1C): "MBC5+RUMBLE",
-	byte(0x1D): "MBC5+RUMBLE+RAM",
-	byte(0x1E): "MBC5+RUMBLE+RAM+BATTERY",
-	byte(0xFC): "POCKET CAMERA",
-	byte(0xFD): "BANDAI TAMA5",
-	byte(0xFE): "HuC3",
-	byte(0xFF): "HuC1+RAM+BATTERY",
+	// Memory Controller Bank implementation
+	MBC MBC
 }
 
 // Reference https://gbdev.io/pandocs/The_Cartridge_Header.html
@@ -97,6 +67,7 @@ func (c *Cartridge) LoadCartridge() error {
 		return errors.New("[ERROR] Unsupported cartridge type loaded from " + c.title)
 	} else {
 		log.Println("[Cartridge] Cartridge type discovered:", ct)
+		// set MBC based on found string
 	}
 
 	return nil
@@ -110,4 +81,46 @@ func NewCartridge(cartPath string) (*Cartridge, error) {
 
 	// we'll load cart title directly from the ROM data on init
 	return &Cartridge{title: "", filePath: cartPath}, nil
+}
+
+/*
+* Memory Bank Controller implementations .... lol there's a lot to do here
+ */
+
+// A generic Memory Bank Controller interface.
+type MBC interface {
+	ReadRom(uint16) (byte, error)
+}
+
+// https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type
+var cartridgeTypeMap = map[byte]string{
+	byte(0x00): "ROM ONLY",
+	byte(0x01): "MBC1",
+	byte(0x02): "MBC1+RAM",
+	byte(0x03): "MBC1+RAM+BATTERY",
+	byte(0x05): "MBC2",
+	byte(0x06): "MBC2+BATTERY",
+	byte(0x08): "ROM+RAM",
+	byte(0x09): "ROM+RAM+BATTERY",
+	byte(0x0B): "MMM01",
+	byte(0x0C): "MMM01+RAM",
+	byte(0x0D): "MMM01+RAM+BATTERY",
+	byte(0x0F): "MBC3+TIMER+BATTERY",
+	byte(0x10): "MBC3+TIMER+RAM+BATTERY",
+	byte(0x11): "MBC3",
+	byte(0x12): "MBC3+RAM",
+	byte(0x13): "MBC3+RAM+BATTERY",
+	byte(0x15): "MBC4",
+	byte(0x16): "MBC4+RAM",
+	byte(0x17): "MBC4+RAM+BATTERY",
+	byte(0x19): "MBC5",
+	byte(0x1A): "MBC5+RAM",
+	byte(0x1B): "MBC5+RAM+BATTERY",
+	byte(0x1C): "MBC5+RUMBLE",
+	byte(0x1D): "MBC5+RUMBLE+RAM",
+	byte(0x1E): "MBC5+RUMBLE+RAM+BATTERY",
+	byte(0xFC): "POCKET CAMERA",
+	byte(0xFD): "BANDAI TAMA5",
+	byte(0xFE): "HuC3",
+	byte(0xFF): "HuC1+RAM+BATTERY",
 }
