@@ -14,3 +14,7 @@
 # Binary
 gameboy-go
 roms/*
+
+# Docs
+docs/*.txt
+docs/*.pdf
