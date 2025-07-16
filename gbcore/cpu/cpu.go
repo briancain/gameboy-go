@@ -8,13 +8,13 @@ import (
 // Game Boy cpu type Z80
 // Z80 Manual (http://www.zilog.com/docs/z80/um0080.pdf)
 type Z80 struct {
-	reg    Registers
-	clock  Clock
-	halted bool
+	reg     Registers
+	clock   Clock
+	halted  bool
 	stopped bool
 
-	interruptEnabled bool
-	interruptMaster  bool // IME flag
+	interruptEnabled  bool
+	interruptMaster   bool // IME flag
 	pendingInterrupts byte
 
 	// Reference to MMU for memory access
@@ -212,7 +212,7 @@ func (cpu *Z80) executeInstruction(opcode byte) int {
 
 func (cpu *Z80) DisplayCPUFrame() string {
 	return fmt.Sprintf("A:  %02X\nF:  %02X\nB:  %02X\nC:  %02X\nD:  %02X\nE:  %02X\nH:  %02X\nL:  %02X\nPC: %04X\nSP: %04X\nFlags: Z:%t N:%t H:%t C:%t",
-		cpu.reg.A, cpu.reg.F, cpu.reg.B, cpu.reg.C, cpu.reg.D, cpu.reg.E, cpu.reg.H, cpu.reg.L, 
+		cpu.reg.A, cpu.reg.F, cpu.reg.B, cpu.reg.C, cpu.reg.D, cpu.reg.E, cpu.reg.H, cpu.reg.L,
 		cpu.reg.PC, cpu.reg.SP,
 		cpu.reg.GetFlag(FLAG_Z), cpu.reg.GetFlag(FLAG_N), cpu.reg.GetFlag(FLAG_H), cpu.reg.GetFlag(FLAG_C))
 }

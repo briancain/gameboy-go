@@ -10,38 +10,38 @@ import (
 
 // Cartridge types
 const (
-	CART_ROM_ONLY     = 0x00
-	CART_MBC1         = 0x01
-	CART_MBC1_RAM     = 0x02
-	CART_MBC1_RAM_BAT = 0x03
-	CART_MBC2         = 0x05
-	CART_MBC2_BAT     = 0x06
-	CART_ROM_RAM      = 0x08
-	CART_ROM_RAM_BAT  = 0x09
-	CART_MMM01        = 0x0B
-	CART_MMM01_RAM    = 0x0C
-	CART_MMM01_RAM_BAT = 0x0D
-	CART_MBC3_TIMER_BAT = 0x0F
-	CART_MBC3_TIMER_RAM_BAT = 0x10
-	CART_MBC3         = 0x11
-	CART_MBC3_RAM     = 0x12
-	CART_MBC3_RAM_BAT = 0x13
-	CART_MBC5         = 0x19
-	CART_MBC5_RAM     = 0x1A
-	CART_MBC5_RAM_BAT = 0x1B
-	CART_MBC5_RUMBLE  = 0x1C
-	CART_MBC5_RUMBLE_RAM = 0x1D
+	CART_ROM_ONLY            = 0x00
+	CART_MBC1                = 0x01
+	CART_MBC1_RAM            = 0x02
+	CART_MBC1_RAM_BAT        = 0x03
+	CART_MBC2                = 0x05
+	CART_MBC2_BAT            = 0x06
+	CART_ROM_RAM             = 0x08
+	CART_ROM_RAM_BAT         = 0x09
+	CART_MMM01               = 0x0B
+	CART_MMM01_RAM           = 0x0C
+	CART_MMM01_RAM_BAT       = 0x0D
+	CART_MBC3_TIMER_BAT      = 0x0F
+	CART_MBC3_TIMER_RAM_BAT  = 0x10
+	CART_MBC3                = 0x11
+	CART_MBC3_RAM            = 0x12
+	CART_MBC3_RAM_BAT        = 0x13
+	CART_MBC5                = 0x19
+	CART_MBC5_RAM            = 0x1A
+	CART_MBC5_RAM_BAT        = 0x1B
+	CART_MBC5_RUMBLE         = 0x1C
+	CART_MBC5_RUMBLE_RAM     = 0x1D
 	CART_MBC5_RUMBLE_RAM_BAT = 0x1E
 )
 
 // RAM sizes
 const (
-	RAM_NONE = 0x00
-	RAM_2KB  = 0x01
-	RAM_8KB  = 0x02
-	RAM_32KB = 0x03
+	RAM_NONE  = 0x00
+	RAM_2KB   = 0x01
+	RAM_8KB   = 0x02
+	RAM_32KB  = 0x03
 	RAM_128KB = 0x04
-	RAM_64KB = 0x05
+	RAM_64KB  = 0x05
 )
 
 type Cartridge struct {
@@ -59,7 +59,7 @@ type Cartridge struct {
 
 	// RAM size code
 	ramSize byte
-	
+
 	// ROM size code
 	romSize byte
 }
@@ -104,17 +104,17 @@ func (c *Cartridge) LoadCartridge() error {
 	} else {
 		log.Println("[Cartridge] Cartridge type:", ct)
 	}
-	
+
 	// ROM size
 	c.romSize = c.rom[0x148]
 	romSizeBytes := getROMSize(c.romSize)
 	log.Println("[Cartridge] ROM size:", romSizeBytes/1024, "KB")
-	
+
 	// RAM size
 	c.ramSize = c.rom[0x149]
 	ramSizeBytes := getRAMSize(c.ramSize)
 	log.Println("[Cartridge] RAM size:", ramSizeBytes/1024, "KB")
-	
+
 	// Initialize the appropriate MBC
 	if err := c.initMBC(); err != nil {
 		return err
@@ -126,20 +126,20 @@ func (c *Cartridge) LoadCartridge() error {
 // Initialize the appropriate Memory Bank Controller
 func (c *Cartridge) initMBC() error {
 	ramSizeBytes := getRAMSize(c.ramSize)
-	
+
 	switch c.cartType {
 	case CART_ROM_ONLY:
 		c.mbc = &ROMOnly{rom: c.rom, ram: make([]byte, ramSizeBytes)}
-	
+
 	case CART_MBC1, CART_MBC1_RAM, CART_MBC1_RAM_BAT:
 		c.mbc = NewMBC1(c.rom, int(ramSizeBytes))
-	
+
 	// Add more MBC types as needed
-	
+
 	default:
 		return fmt.Errorf("unsupported cartridge type: %02X", c.cartType)
 	}
-	
+
 	return nil
 }
 
@@ -229,7 +229,7 @@ func (r *ROMOnly) ReadByte(addr uint16) byte {
 			return r.rom[addr]
 		}
 		return 0xFF
-	
+
 	case addr >= 0xA000 && addr < 0xC000:
 		// RAM (if present)
 		if len(r.ram) > 0 {
@@ -239,7 +239,7 @@ func (r *ROMOnly) ReadByte(addr uint16) byte {
 			}
 		}
 		return 0xFF
-	
+
 	default:
 		return 0xFF
 	}

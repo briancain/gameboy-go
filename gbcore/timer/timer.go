@@ -1,9 +1,5 @@
 package gbcore
 
-import (
-	"log"
-)
-
 // Timer handles the Game Boy's timing system
 type Timer struct {
 	// Timer registers
@@ -11,11 +7,11 @@ type Timer struct {
 	tima byte // Timer Counter (FF05)
 	tma  byte // Timer Modulo (FF06)
 	tac  byte // Timer Control (FF07)
-	
+
 	// Internal counters
 	divCounter  int // Counter for DIV register
 	timaCounter int // Counter for TIMA register
-	
+
 	// Reference to MMU for memory access
 	mmu MMU
 }
@@ -37,7 +33,7 @@ func NewTimer(mmu MMU) *Timer {
 		timaCounter: 0,
 		mmu:         mmu,
 	}
-	
+
 	return timer
 }
 
@@ -60,12 +56,12 @@ func (t *Timer) Step(cycles int) {
 		t.div++
 		t.divCounter -= 256
 	}
-	
+
 	// Check if timer is enabled
 	if (t.tac & 0x04) != 0 {
 		// Update TIMA register
 		t.timaCounter += cycles
-		
+
 		// Get timer frequency
 		var timerFreq int
 		switch t.tac & 0x03 {
@@ -78,20 +74,20 @@ func (t *Timer) Step(cycles int) {
 		case 3:
 			timerFreq = 16384 // 16384Hz (256 cycles)
 		}
-		
+
 		// Calculate cycles per increment
 		cyclesPerIncrement := 4194304 / timerFreq
-		
+
 		// Update TIMA
 		if t.timaCounter >= cyclesPerIncrement {
 			t.tima++
 			t.timaCounter -= cyclesPerIncrement
-			
+
 			// Check for TIMA overflow
 			if t.tima == 0 {
 				// Reset TIMA to TMA
 				t.tima = t.tma
-				
+
 				// Request timer interrupt
 				t.requestInterrupt()
 			}
@@ -102,7 +98,7 @@ func (t *Timer) Step(cycles int) {
 // Request a timer interrupt
 func (t *Timer) requestInterrupt() {
 	// Set bit 2 of the IF register (0xFF0F)
-	t.mmu.WriteByte(0xFF0F, t.mmu.ReadByte(0xFF0F) | 0x04)
+	t.mmu.WriteByte(0xFF0F, t.mmu.ReadByte(0xFF0F)|0x04)
 }
 
 // Read a timer register

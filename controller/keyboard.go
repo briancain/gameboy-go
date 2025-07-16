@@ -6,7 +6,7 @@ import "log"
 type Keyboard struct {
 	// Current button state (1 = pressed)
 	buttonState byte
-	
+
 	// Joypad register state
 	joypadRegister byte
 }
@@ -43,7 +43,7 @@ func (k *Keyboard) WriteJoypad(value byte) {
 // Read the joypad register
 func (k *Keyboard) ReadJoypad() byte {
 	result := k.joypadRegister | 0xCF // Set bits 0-3 and 6-7 to 1
-	
+
 	// Check which button type is selected
 	if (k.joypadRegister & 0x10) == 0 {
 		// Direction buttons
@@ -60,7 +60,7 @@ func (k *Keyboard) ReadJoypad() byte {
 			result &= ^byte(0x08)
 		}
 	}
-	
+
 	if (k.joypadRegister & 0x20) == 0 {
 		// Action buttons
 		if (k.buttonState & BUTTON_A) != 0 {
@@ -76,6 +76,6 @@ func (k *Keyboard) ReadJoypad() byte {
 			result &= ^byte(0x08)
 		}
 	}
-	
+
 	return result
 }

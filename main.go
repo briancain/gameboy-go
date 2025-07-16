@@ -34,7 +34,7 @@ func startEmulator() error {
 		log.Print("Failed to create new gbcore: ", err)
 		return err
 	}
-	
+
 	if err := gb.Init(CartridgePath); err != nil {
 		log.Print("[ERROR] Failed to initialize new gbcore!\n", err)
 		return err
@@ -43,13 +43,13 @@ func startEmulator() error {
 	// Set up signal handling for graceful shutdown
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	
+
 	// Start the emulator in a goroutine
 	errChan := make(chan error)
 	go func() {
 		errChan <- gb.Run()
 	}()
-	
+
 	// Wait for either an error or a signal
 	select {
 	case err := <-errChan:
@@ -71,9 +71,9 @@ func main() {
 		flag.Usage()
 		return
 	}
-	
+
 	if CartridgePath == "" {
-		log.Println("! ERROR: You must define a cartridge ROM file path with '-rom-file'\n")
+		log.Println("! ERROR: You must define a cartridge ROM file path with '-rom-file'")
 		flag.Usage()
 		os.Exit(1)
 	}

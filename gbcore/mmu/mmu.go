@@ -20,15 +20,15 @@ import (
 
 type MemoryManagedUnit struct {
 	// Memory regions
-	bios      [0x100]byte // 0x0000-0x00FF (only during boot)
-	rom       []byte      // Cartridge ROM
-	vram      [0x2000]byte // 0x8000-0x9FFF
-	eram      [0x2000]byte // 0xA000-0xBFFF (Cartridge RAM)
-	wram      [0x2000]byte // 0xC000-0xDFFF (Work RAM)
-	oam       [0x100]byte  // 0xFE00-0xFE9F (Sprite attribute table)
-	io        [0x80]byte   // 0xFF00-0xFF7F (I/O registers)
-	hram      [0x7F]byte   // 0xFF80-0xFFFE (High RAM)
-	ie        byte         // 0xFFFF (Interrupt Enable register)
+	bios [0x100]byte  // 0x0000-0x00FF (only during boot)
+	rom  []byte       // Cartridge ROM
+	vram [0x2000]byte // 0x8000-0x9FFF
+	eram [0x2000]byte // 0xA000-0xBFFF (Cartridge RAM)
+	wram [0x2000]byte // 0xC000-0xDFFF (Work RAM)
+	oam  [0x100]byte  // 0xFE00-0xFE9F (Sprite attribute table)
+	io   [0x80]byte   // 0xFF00-0xFF7F (I/O registers)
+	hram [0x7F]byte   // 0xFF80-0xFFFE (High RAM)
+	ie   byte         // 0xFFFF (Interrupt Enable register)
 
 	// Control flags
 	biosActive bool // Whether BIOS is active
@@ -54,7 +54,7 @@ func NewMMU() *MemoryManagedUnit {
 // Reset the MMU to initial state
 func (m *MemoryManagedUnit) Reset() {
 	log.Print("Resetting MMU")
-	
+
 	// Clear all memory regions
 	for i := range m.vram {
 		m.vram[i] = 0
@@ -75,7 +75,7 @@ func (m *MemoryManagedUnit) Reset() {
 		m.hram[i] = 0
 	}
 	m.ie = 0
-	
+
 	// Initialize I/O registers to their default values
 	m.io[0x05] = 0x00 // TIMA
 	m.io[0x06] = 0x00 // TMA
@@ -107,7 +107,7 @@ func (m *MemoryManagedUnit) Reset() {
 	m.io[0x49] = 0xFF // OBP1
 	m.io[0x4A] = 0x00 // WY
 	m.io[0x4B] = 0x00 // WX
-	m.ie = 0x00 // IE
+	m.ie = 0x00       // IE
 }
 
 // Set the cartridge
@@ -120,7 +120,7 @@ func (m *MemoryManagedUnit) LoadBIOS(data []byte) error {
 	if len(data) > len(m.bios) {
 		return nil // Error: BIOS data too large
 	}
-	
+
 	copy(m.bios[:], data)
 	m.biosActive = true
 	return nil
