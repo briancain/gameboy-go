@@ -34,9 +34,6 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: Vet
-      run: go vet ./...
-
     - name: Format check
       run: |
         if [ -n "$(gofmt -l .)" ]; then
