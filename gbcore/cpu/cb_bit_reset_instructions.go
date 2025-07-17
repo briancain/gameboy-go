@@ -2,7 +2,7 @@ package gbcore
 
 // This file contains CB-prefixed bit reset instructions:
 // - RES b,r (Reset bit b of register r)
-// 
+//
 // These instructions reset (set to 0) a specific bit in a register or memory location.
 // No flags are affected by these operations.
 

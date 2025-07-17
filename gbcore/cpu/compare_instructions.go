@@ -12,25 +12,25 @@ package gbcore
 func (cpu *Z80) CP_B() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.B)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.B & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -38,25 +38,25 @@ func (cpu *Z80) CP_B() int {
 func (cpu *Z80) CP_C() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.C)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.C & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -64,25 +64,25 @@ func (cpu *Z80) CP_C() int {
 func (cpu *Z80) CP_D() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.D)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.D & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -90,25 +90,25 @@ func (cpu *Z80) CP_D() int {
 func (cpu *Z80) CP_E() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.E)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.E & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -116,25 +116,25 @@ func (cpu *Z80) CP_E() int {
 func (cpu *Z80) CP_H() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.H)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.H & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -142,25 +142,25 @@ func (cpu *Z80) CP_H() int {
 func (cpu *Z80) CP_L() int {
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(cpu.reg.L)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.L & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 4
 }
 
@@ -168,38 +168,38 @@ func (cpu *Z80) CP_L() int {
 func (cpu *Z80) CP_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(value)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (value & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
 // 0xBF: CP A - Compare A with A
 func (cpu *Z80) CP_A() int {
 	// A - A is always 0
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_Z | FLAG_N // Set zero and subtract flags
-	
+
 	return 4
 }
 
@@ -208,28 +208,28 @@ func (cpu *Z80) CP_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Calculate result (don't store it)
 	result := int16(cpu.reg.A) - int16(value)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (value & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -242,31 +242,31 @@ func (cpu *Z80) SBC_A_B() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.B) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.B & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -277,31 +277,31 @@ func (cpu *Z80) SBC_A_C() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.C) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.C & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -312,31 +312,31 @@ func (cpu *Z80) SBC_A_D() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.D) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.D & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -347,31 +347,31 @@ func (cpu *Z80) SBC_A_E() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.E) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.E & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -382,31 +382,31 @@ func (cpu *Z80) SBC_A_H() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.H) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.H & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -417,31 +417,31 @@ func (cpu *Z80) SBC_A_L() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.L) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((cpu.reg.L & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -449,37 +449,37 @@ func (cpu *Z80) SBC_A_L() int {
 func (cpu *Z80) SBC_A_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Get carry value
 	carry := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(value) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((value & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 8
 }
 
@@ -490,31 +490,31 @@ func (cpu *Z80) SBC_A_A() int {
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result (A - A - carry = -carry)
 	result := -int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if result == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -523,37 +523,37 @@ func (cpu *Z80) SBC_A_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Get carry value
 	carry := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		carry = 1
 	}
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(value) - int16(carry)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < ((value & 0x0F) + carry) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 8
 }
 
@@ -561,28 +561,28 @@ func (cpu *Z80) SBC_A_d8() int {
 func (cpu *Z80) SUB_B() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.B)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.B & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -590,28 +590,28 @@ func (cpu *Z80) SUB_B() int {
 func (cpu *Z80) SUB_C() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.C)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.C & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -619,28 +619,28 @@ func (cpu *Z80) SUB_C() int {
 func (cpu *Z80) SUB_D() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.D)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.D & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -648,28 +648,28 @@ func (cpu *Z80) SUB_D() int {
 func (cpu *Z80) SUB_E() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.E)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.E & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -677,28 +677,28 @@ func (cpu *Z80) SUB_E() int {
 func (cpu *Z80) SUB_H() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.H)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.H & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -706,28 +706,28 @@ func (cpu *Z80) SUB_H() int {
 func (cpu *Z80) SUB_L() int {
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(cpu.reg.L)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (cpu.reg.L & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 4
 }
 
@@ -735,31 +735,31 @@ func (cpu *Z80) SUB_L() int {
 func (cpu *Z80) SUB_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(value)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (value & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 8
 }
 
@@ -767,10 +767,10 @@ func (cpu *Z80) SUB_HL() int {
 func (cpu *Z80) SUB_A() int {
 	// A - A is always 0
 	cpu.reg.A = 0
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_Z | FLAG_N // Set zero and subtract flags
-	
+
 	return 4
 }
 
@@ -779,30 +779,30 @@ func (cpu *Z80) SUB_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	result := int16(cpu.reg.A) - int16(value)
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_N // Set subtract flag
-	
+
 	// Zero flag
 	if (result & 0xFF) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Half carry flag - set if borrow from bit 4
 	if (cpu.reg.A & 0x0F) < (value & 0x0F) {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if borrow
 	if result < 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.A = byte(result & 0xFF)
-	
+
 	return 8
 }

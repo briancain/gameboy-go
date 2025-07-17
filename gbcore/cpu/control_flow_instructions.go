@@ -14,7 +14,7 @@ func (cpu *Z80) JP_a16() int {
 	// Get jump address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC = address
-	
+
 	return 16
 }
 
@@ -23,13 +23,13 @@ func (cpu *Z80) JP_NZ_a16() int {
 	// Get jump address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_Z) {
 		cpu.reg.PC = address
 		return 16
 	}
-	
+
 	return 12
 }
 
@@ -38,13 +38,13 @@ func (cpu *Z80) JP_Z_a16() int {
 	// Get jump address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_Z) {
 		cpu.reg.PC = address
 		return 16
 	}
-	
+
 	return 12
 }
 
@@ -53,13 +53,13 @@ func (cpu *Z80) JP_NC_a16() int {
 	// Get jump address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_C) {
 		cpu.reg.PC = address
 		return 16
 	}
-	
+
 	return 12
 }
 
@@ -68,13 +68,13 @@ func (cpu *Z80) JP_C_a16() int {
 	// Get jump address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_C) {
 		cpu.reg.PC = address
 		return 16
 	}
-	
+
 	return 12
 }
 
@@ -89,10 +89,10 @@ func (cpu *Z80) JR_r8() int {
 	// Get signed offset
 	offset := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Jump
 	cpu.reg.PC = uint16(int32(cpu.reg.PC) + int32(offset))
-	
+
 	return 12
 }
 
@@ -101,13 +101,13 @@ func (cpu *Z80) JR_NZ_r8() int {
 	// Get signed offset
 	offset := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_Z) {
 		cpu.reg.PC = uint16(int32(cpu.reg.PC) + int32(offset))
 		return 12
 	}
-	
+
 	return 8
 }
 
@@ -116,13 +116,13 @@ func (cpu *Z80) JR_Z_r8() int {
 	// Get signed offset
 	offset := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_Z) {
 		cpu.reg.PC = uint16(int32(cpu.reg.PC) + int32(offset))
 		return 12
 	}
-	
+
 	return 8
 }
 
@@ -131,13 +131,13 @@ func (cpu *Z80) JR_NC_r8() int {
 	// Get signed offset
 	offset := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_C) {
 		cpu.reg.PC = uint16(int32(cpu.reg.PC) + int32(offset))
 		return 12
 	}
-	
+
 	return 8
 }
 
@@ -146,13 +146,13 @@ func (cpu *Z80) JR_C_r8() int {
 	// Get signed offset
 	offset := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_C) {
 		cpu.reg.PC = uint16(int32(cpu.reg.PC) + int32(offset))
 		return 12
 	}
-	
+
 	return 8
 }
 
@@ -161,14 +161,14 @@ func (cpu *Z80) CALL_a16() int {
 	// Get call address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to call address
 	cpu.reg.PC = address
-	
+
 	return 24
 }
 
@@ -177,19 +177,19 @@ func (cpu *Z80) CALL_NZ_a16() int {
 	// Get call address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_Z) {
 		// Push current PC onto stack
 		cpu.reg.SP -= 2
 		cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-		
+
 		// Jump to call address
 		cpu.reg.PC = address
-		
+
 		return 24
 	}
-	
+
 	return 12
 }
 
@@ -198,19 +198,19 @@ func (cpu *Z80) CALL_Z_a16() int {
 	// Get call address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_Z) {
 		// Push current PC onto stack
 		cpu.reg.SP -= 2
 		cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-		
+
 		// Jump to call address
 		cpu.reg.PC = address
-		
+
 		return 24
 	}
-	
+
 	return 12
 }
 
@@ -219,19 +219,19 @@ func (cpu *Z80) CALL_NC_a16() int {
 	// Get call address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if !cpu.reg.GetFlag(FLAG_C) {
 		// Push current PC onto stack
 		cpu.reg.SP -= 2
 		cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-		
+
 		// Jump to call address
 		cpu.reg.PC = address
-		
+
 		return 24
 	}
-	
+
 	return 12
 }
 
@@ -240,19 +240,19 @@ func (cpu *Z80) CALL_C_a16() int {
 	// Get call address
 	address := cpu.mmu.ReadWord(cpu.reg.PC)
 	cpu.reg.PC += 2
-	
+
 	// Check condition
 	if cpu.reg.GetFlag(FLAG_C) {
 		// Push current PC onto stack
 		cpu.reg.SP -= 2
 		cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-		
+
 		// Jump to call address
 		cpu.reg.PC = address
-		
+
 		return 24
 	}
-	
+
 	return 12
 }
 
@@ -261,7 +261,7 @@ func (cpu *Z80) RET() int {
 	// Pop address from stack
 	cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 	cpu.reg.SP += 2
-	
+
 	return 16
 }
 
@@ -272,10 +272,10 @@ func (cpu *Z80) RET_NZ() int {
 		// Pop address from stack
 		cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 		cpu.reg.SP += 2
-		
+
 		return 20
 	}
-	
+
 	return 8
 }
 
@@ -286,10 +286,10 @@ func (cpu *Z80) RET_Z() int {
 		// Pop address from stack
 		cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 		cpu.reg.SP += 2
-		
+
 		return 20
 	}
-	
+
 	return 8
 }
 
@@ -300,10 +300,10 @@ func (cpu *Z80) RET_NC() int {
 		// Pop address from stack
 		cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 		cpu.reg.SP += 2
-		
+
 		return 20
 	}
-	
+
 	return 8
 }
 
@@ -314,10 +314,10 @@ func (cpu *Z80) RET_C() int {
 		// Pop address from stack
 		cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 		cpu.reg.SP += 2
-		
+
 		return 20
 	}
-	
+
 	return 8
 }
 
@@ -326,10 +326,10 @@ func (cpu *Z80) RETI() int {
 	// Pop address from stack
 	cpu.reg.PC = cpu.mmu.ReadWord(cpu.reg.SP)
 	cpu.reg.SP += 2
-	
+
 	// Enable interrupts
 	cpu.interruptMaster = true
-	
+
 	return 16
 }
 
@@ -340,10 +340,10 @@ func (cpu *Z80) RST_00H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0000
-	
+
 	return 16
 }
 
@@ -352,10 +352,10 @@ func (cpu *Z80) RST_08H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0008
-	
+
 	return 16
 }
 
@@ -364,10 +364,10 @@ func (cpu *Z80) RST_10H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0010
-	
+
 	return 16
 }
 
@@ -376,10 +376,10 @@ func (cpu *Z80) RST_18H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0018
-	
+
 	return 16
 }
 
@@ -388,10 +388,10 @@ func (cpu *Z80) RST_20H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0020
-	
+
 	return 16
 }
 
@@ -400,10 +400,10 @@ func (cpu *Z80) RST_28H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0028
-	
+
 	return 16
 }
 
@@ -412,10 +412,10 @@ func (cpu *Z80) RST_30H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0030
-	
+
 	return 16
 }
 
@@ -424,9 +424,9 @@ func (cpu *Z80) RST_38H() int {
 	// Push current PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to restart address
 	cpu.reg.PC = 0x0038
-	
+
 	return 16
 }

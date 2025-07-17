@@ -2,7 +2,7 @@ package gbcore
 
 // This file contains CB-prefixed bit test instructions:
 // - BIT b,r (Test bit b of register r)
-// 
+//
 // These instructions test if a specific bit in a register or memory location
 // is set (1) or reset (0). The result affects the Z flag (set if bit is 0).
 // The N flag is reset, and the H flag is set.
@@ -11,7 +11,7 @@ package gbcore
 func (cpu *Z80) testBit(value byte, bit byte) {
 	// Set flags
 	cpu.reg.F = (cpu.reg.F & FLAG_C) | FLAG_H // Preserve carry flag, set half carry flag
-	
+
 	// Zero flag - set if bit is not set
 	if (value & (1 << bit)) == 0 {
 		cpu.reg.SetFlag(FLAG_Z)

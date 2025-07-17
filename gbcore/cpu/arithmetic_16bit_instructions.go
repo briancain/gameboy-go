@@ -61,26 +61,26 @@ func (cpu *Z80) ADD_HL_BC() int {
 	// Get values
 	hl := cpu.reg.GetHL()
 	bc := cpu.reg.GetBC()
-	
+
 	// Calculate result
 	result := uint32(hl) + uint32(bc)
-	
+
 	// Set flags
 	cpu.reg.F &= FLAG_Z // Preserve zero flag
-	
+
 	// Half carry flag - set if carry from bit 11
 	if ((hl & 0x0FFF) + (bc & 0x0FFF)) > 0x0FFF {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 15
 	if result > 0xFFFF {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.SetHL(uint16(result & 0xFFFF))
-	
+
 	return 8
 }
 
@@ -89,26 +89,26 @@ func (cpu *Z80) ADD_HL_DE() int {
 	// Get values
 	hl := cpu.reg.GetHL()
 	de := cpu.reg.GetDE()
-	
+
 	// Calculate result
 	result := uint32(hl) + uint32(de)
-	
+
 	// Set flags
 	cpu.reg.F &= FLAG_Z // Preserve zero flag
-	
+
 	// Half carry flag - set if carry from bit 11
 	if ((hl & 0x0FFF) + (de & 0x0FFF)) > 0x0FFF {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 15
 	if result > 0xFFFF {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.SetHL(uint16(result & 0xFFFF))
-	
+
 	return 8
 }
 
@@ -116,26 +116,26 @@ func (cpu *Z80) ADD_HL_DE() int {
 func (cpu *Z80) ADD_HL_HL() int {
 	// Get value
 	hl := cpu.reg.GetHL()
-	
+
 	// Calculate result
 	result := uint32(hl) + uint32(hl)
-	
+
 	// Set flags
 	cpu.reg.F &= FLAG_Z // Preserve zero flag
-	
+
 	// Half carry flag - set if carry from bit 11
 	if ((hl & 0x0FFF) + (hl & 0x0FFF)) > 0x0FFF {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 15
 	if result > 0xFFFF {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.SetHL(uint16(result & 0xFFFF))
-	
+
 	return 8
 }
 
@@ -144,26 +144,26 @@ func (cpu *Z80) ADD_HL_SP() int {
 	// Get values
 	hl := cpu.reg.GetHL()
 	sp := cpu.reg.SP
-	
+
 	// Calculate result
 	result := uint32(hl) + uint32(sp)
-	
+
 	// Set flags
 	cpu.reg.F &= FLAG_Z // Preserve zero flag
-	
+
 	// Half carry flag - set if carry from bit 11
 	if ((hl & 0x0FFF) + (sp & 0x0FFF)) > 0x0FFF {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 15
 	if result > 0xFFFF {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.SetHL(uint16(result & 0xFFFF))
-	
+
 	return 8
 }
 
@@ -172,25 +172,25 @@ func (cpu *Z80) ADD_SP_r8() int {
 	// Get signed 8-bit immediate
 	value := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	result := uint32(cpu.reg.SP) + uint32(int32(value))
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Half carry flag - set if carry from bit 3
 	if ((cpu.reg.SP & 0x0F) + (uint16(value) & 0x0F)) > 0x0F {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 7
 	if ((cpu.reg.SP & 0xFF) + (uint16(value) & 0xFF)) > 0xFF {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Store result
 	cpu.reg.SP = uint16(result & 0xFFFF)
-	
+
 	return 16
 }

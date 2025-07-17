@@ -23,51 +23,51 @@ func (cpu *Z80) handleInterrupts() {
 	// Get interrupt flags (IF) and interrupt enable (IE)
 	interruptFlag := cpu.mmu.ReadByte(0xFF0F)
 	interruptEnable := cpu.mmu.ReadByte(0xFFFF)
-	
+
 	// Calculate pending interrupts
 	pendingInterrupts := interruptFlag & interruptEnable & 0x1F
-	
+
 	// If there are no pending interrupts, return
 	if pendingInterrupts == 0 {
 		return
 	}
-	
+
 	// Disable interrupts
 	cpu.interruptMaster = false
-	
+
 	// Handle interrupts in priority order
 	if pendingInterrupts&INT_VBLANK != 0 {
 		// Clear the interrupt flag
 		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_VBLANK)
-		
+
 		// Call the interrupt handler
 		cpu.callInterrupt(VBLANK_VECTOR)
-		
+
 	} else if pendingInterrupts&INT_LCDC != 0 {
 		// Clear the interrupt flag
 		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_LCDC)
-		
+
 		// Call the interrupt handler
 		cpu.callInterrupt(LCDC_VECTOR)
-		
+
 	} else if pendingInterrupts&INT_TIMER != 0 {
 		// Clear the interrupt flag
 		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_TIMER)
-		
+
 		// Call the interrupt handler
 		cpu.callInterrupt(TIMER_VECTOR)
-		
+
 	} else if pendingInterrupts&INT_SERIAL != 0 {
 		// Clear the interrupt flag
 		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_SERIAL)
-		
+
 		// Call the interrupt handler
 		cpu.callInterrupt(SERIAL_VECTOR)
-		
+
 	} else if pendingInterrupts&INT_JOYPAD != 0 {
 		// Clear the interrupt flag
 		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_JOYPAD)
-		
+
 		// Call the interrupt handler
 		cpu.callInterrupt(JOYPAD_VECTOR)
 	}
@@ -78,7 +78,7 @@ func (cpu *Z80) callInterrupt(vector uint16) {
 	// Push PC onto stack
 	cpu.reg.SP -= 2
 	cpu.mmu.WriteWord(cpu.reg.SP, cpu.reg.PC)
-	
+
 	// Jump to interrupt handler
 	cpu.reg.PC = vector
 }

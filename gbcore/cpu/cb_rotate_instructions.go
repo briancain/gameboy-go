@@ -12,23 +12,23 @@ package gbcore
 func (cpu *Z80) RLC_B() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.B & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.B = (cpu.reg.B << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.B == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -36,23 +36,23 @@ func (cpu *Z80) RLC_B() int {
 func (cpu *Z80) RLC_C() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.C & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.C = (cpu.reg.C << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.C == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -60,23 +60,23 @@ func (cpu *Z80) RLC_C() int {
 func (cpu *Z80) RLC_D() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.D & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.D = (cpu.reg.D << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.D == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -84,23 +84,23 @@ func (cpu *Z80) RLC_D() int {
 func (cpu *Z80) RLC_E() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.E & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.E = (cpu.reg.E << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.E == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -108,23 +108,23 @@ func (cpu *Z80) RLC_E() int {
 func (cpu *Z80) RLC_H() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.H & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.H = (cpu.reg.H << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.H == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -132,23 +132,23 @@ func (cpu *Z80) RLC_H() int {
 func (cpu *Z80) RLC_L() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.L & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.L = (cpu.reg.L << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.L == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -157,29 +157,29 @@ func (cpu *Z80) RLC_HL() int {
 	// Get value from memory
 	address := cpu.reg.GetHL()
 	value := cpu.mmu.ReadByte(address)
-	
+
 	// Get the highest bit before rotation
 	carry := (value & 0x80) >> 7
-	
+
 	// Rotate left
 	value = (value << 1) | carry
-	
+
 	// Write back to memory
 	cpu.mmu.WriteByte(address, value)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if value == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 16
 }
 
@@ -187,23 +187,23 @@ func (cpu *Z80) RLC_HL() int {
 func (cpu *Z80) RLC_A() int {
 	// Get the highest bit before rotation
 	carry := (cpu.reg.A & 0x80) >> 7
-	
+
 	// Rotate left
 	cpu.reg.A = (cpu.reg.A << 1) | carry
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -213,23 +213,23 @@ func (cpu *Z80) RLC_A() int {
 func (cpu *Z80) RRC_B() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.B & 0x01
-	
+
 	// Rotate right
 	cpu.reg.B = (cpu.reg.B >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.B == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -237,23 +237,23 @@ func (cpu *Z80) RRC_B() int {
 func (cpu *Z80) RRC_C() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.C & 0x01
-	
+
 	// Rotate right
 	cpu.reg.C = (cpu.reg.C >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.C == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -261,23 +261,23 @@ func (cpu *Z80) RRC_C() int {
 func (cpu *Z80) RRC_D() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.D & 0x01
-	
+
 	// Rotate right
 	cpu.reg.D = (cpu.reg.D >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.D == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -285,23 +285,23 @@ func (cpu *Z80) RRC_D() int {
 func (cpu *Z80) RRC_E() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.E & 0x01
-	
+
 	// Rotate right
 	cpu.reg.E = (cpu.reg.E >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.E == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -309,23 +309,23 @@ func (cpu *Z80) RRC_E() int {
 func (cpu *Z80) RRC_H() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.H & 0x01
-	
+
 	// Rotate right
 	cpu.reg.H = (cpu.reg.H >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.H == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -333,23 +333,23 @@ func (cpu *Z80) RRC_H() int {
 func (cpu *Z80) RRC_L() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.L & 0x01
-	
+
 	// Rotate right
 	cpu.reg.L = (cpu.reg.L >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.L == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -358,29 +358,29 @@ func (cpu *Z80) RRC_HL() int {
 	// Get value from memory
 	address := cpu.reg.GetHL()
 	value := cpu.mmu.ReadByte(address)
-	
+
 	// Get the lowest bit before rotation
 	carry := value & 0x01
-	
+
 	// Rotate right
 	value = (value >> 1) | (carry << 7)
-	
+
 	// Write back to memory
 	cpu.mmu.WriteByte(address, value)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if value == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 16
 }
 
@@ -388,23 +388,23 @@ func (cpu *Z80) RRC_HL() int {
 func (cpu *Z80) RRC_A() int {
 	// Get the lowest bit before rotation
 	carry := cpu.reg.A & 0x01
-	
+
 	// Rotate right
 	cpu.reg.A = (cpu.reg.A >> 1) | (carry << 7)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if carry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -414,29 +414,29 @@ func (cpu *Z80) RRC_A() int {
 func (cpu *Z80) RL_B() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.B & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.B = (cpu.reg.B << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.B == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -444,29 +444,29 @@ func (cpu *Z80) RL_B() int {
 func (cpu *Z80) RL_C() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.C & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.C = (cpu.reg.C << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.C == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -474,29 +474,29 @@ func (cpu *Z80) RL_C() int {
 func (cpu *Z80) RL_D() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.D & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.D = (cpu.reg.D << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.D == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -504,29 +504,29 @@ func (cpu *Z80) RL_D() int {
 func (cpu *Z80) RL_E() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.E & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.E = (cpu.reg.E << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.E == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -534,29 +534,29 @@ func (cpu *Z80) RL_E() int {
 func (cpu *Z80) RL_H() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.H & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.H = (cpu.reg.H << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.H == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -564,29 +564,29 @@ func (cpu *Z80) RL_H() int {
 func (cpu *Z80) RL_L() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.L & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.L = (cpu.reg.L << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.L == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -595,35 +595,35 @@ func (cpu *Z80) RL_HL() int {
 	// Get value from memory
 	address := cpu.reg.GetHL()
 	value := cpu.mmu.ReadByte(address)
-	
+
 	// Get the highest bit before rotation
 	oldCarry := (value & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	value = (value << 1) | newBit
-	
+
 	// Write back to memory
 	cpu.mmu.WriteByte(address, value)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if value == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 16
 }
 
@@ -631,29 +631,29 @@ func (cpu *Z80) RL_HL() int {
 func (cpu *Z80) RL_A() int {
 	// Get the highest bit before rotation
 	oldCarry := (cpu.reg.A & 0x80) >> 7
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 1
 	}
-	
+
 	// Rotate left through carry
 	cpu.reg.A = (cpu.reg.A << 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -663,29 +663,29 @@ func (cpu *Z80) RL_A() int {
 func (cpu *Z80) RR_B() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.B & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.B = (cpu.reg.B >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.B == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -693,29 +693,29 @@ func (cpu *Z80) RR_B() int {
 func (cpu *Z80) RR_C() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.C & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.C = (cpu.reg.C >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.C == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -723,29 +723,29 @@ func (cpu *Z80) RR_C() int {
 func (cpu *Z80) RR_D() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.D & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.D = (cpu.reg.D >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.D == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -753,29 +753,29 @@ func (cpu *Z80) RR_D() int {
 func (cpu *Z80) RR_E() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.E & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.E = (cpu.reg.E >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.E == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -783,29 +783,29 @@ func (cpu *Z80) RR_E() int {
 func (cpu *Z80) RR_H() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.H & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.H = (cpu.reg.H >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.H == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -813,29 +813,29 @@ func (cpu *Z80) RR_H() int {
 func (cpu *Z80) RR_L() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.L & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.L = (cpu.reg.L >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.L == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }
 
@@ -844,35 +844,35 @@ func (cpu *Z80) RR_HL() int {
 	// Get value from memory
 	address := cpu.reg.GetHL()
 	value := cpu.mmu.ReadByte(address)
-	
+
 	// Get the lowest bit before rotation
 	oldCarry := value & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	value = (value >> 1) | newBit
-	
+
 	// Write back to memory
 	cpu.mmu.WriteByte(address, value)
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if value == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 16
 }
 
@@ -880,28 +880,28 @@ func (cpu *Z80) RR_HL() int {
 func (cpu *Z80) RR_A() int {
 	// Get the lowest bit before rotation
 	oldCarry := cpu.reg.A & 0x01
-	
+
 	// Get current carry flag
 	newBit := byte(0)
 	if cpu.reg.GetFlag(FLAG_C) {
 		newBit = 0x80
 	}
-	
+
 	// Rotate right through carry
 	cpu.reg.A = (cpu.reg.A >> 1) | newBit
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	// Carry flag - set to the bit that was shifted out
 	if oldCarry == 1 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	return 8
 }

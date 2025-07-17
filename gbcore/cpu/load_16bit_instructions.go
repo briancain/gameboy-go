@@ -51,26 +51,26 @@ func (cpu *Z80) LD_HL_SP_r8() int {
 	// Get signed 8-bit immediate
 	value := int8(cpu.mmu.ReadByte(cpu.reg.PC))
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	result := uint16(int32(cpu.reg.SP) + int32(value))
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Half carry flag - set if carry from bit 3
 	if ((cpu.reg.SP ^ uint16(value) ^ result) & 0x10) != 0 {
 		cpu.reg.SetFlag(FLAG_H)
 	}
-	
+
 	// Carry flag - set if carry from bit 7
 	if ((cpu.reg.SP ^ uint16(value) ^ result) & 0x100) != 0 {
 		cpu.reg.SetFlag(FLAG_C)
 	}
-	
+
 	// Load result into HL
 	cpu.reg.SetHL(result)
-	
+
 	return 12
 }
 

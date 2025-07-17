@@ -13,15 +13,15 @@ package gbcore
 func (cpu *Z80) AND_B() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.B
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -29,15 +29,15 @@ func (cpu *Z80) AND_B() int {
 func (cpu *Z80) AND_C() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.C
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -45,15 +45,15 @@ func (cpu *Z80) AND_C() int {
 func (cpu *Z80) AND_D() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.D
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -61,15 +61,15 @@ func (cpu *Z80) AND_D() int {
 func (cpu *Z80) AND_E() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.E
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -77,15 +77,15 @@ func (cpu *Z80) AND_E() int {
 func (cpu *Z80) AND_H() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.H
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -93,15 +93,15 @@ func (cpu *Z80) AND_H() int {
 func (cpu *Z80) AND_L() int {
 	// Calculate result
 	cpu.reg.A &= cpu.reg.L
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -109,33 +109,33 @@ func (cpu *Z80) AND_L() int {
 func (cpu *Z80) AND_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Calculate result
 	cpu.reg.A &= value
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }
 
 // 0xA7: AND A - Logical AND A with A
 func (cpu *Z80) AND_A() int {
 	// A & A = A, no change to A
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -144,18 +144,18 @@ func (cpu *Z80) AND_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	cpu.reg.A &= value
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_H // Set half carry flag
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }
 
@@ -163,15 +163,15 @@ func (cpu *Z80) AND_d8() int {
 func (cpu *Z80) OR_B() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.B
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -179,15 +179,15 @@ func (cpu *Z80) OR_B() int {
 func (cpu *Z80) OR_C() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.C
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -195,15 +195,15 @@ func (cpu *Z80) OR_C() int {
 func (cpu *Z80) OR_D() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.D
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -211,15 +211,15 @@ func (cpu *Z80) OR_D() int {
 func (cpu *Z80) OR_E() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.E
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -227,15 +227,15 @@ func (cpu *Z80) OR_E() int {
 func (cpu *Z80) OR_H() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.H
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -243,15 +243,15 @@ func (cpu *Z80) OR_H() int {
 func (cpu *Z80) OR_L() int {
 	// Calculate result
 	cpu.reg.A |= cpu.reg.L
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -259,33 +259,33 @@ func (cpu *Z80) OR_L() int {
 func (cpu *Z80) OR_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Calculate result
 	cpu.reg.A |= value
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }
 
 // 0xB7: OR A - Logical OR A with A
 func (cpu *Z80) OR_A() int {
 	// A | A = A, no change to A
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -294,18 +294,18 @@ func (cpu *Z80) OR_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	cpu.reg.A |= value
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }
 
@@ -313,15 +313,15 @@ func (cpu *Z80) OR_d8() int {
 func (cpu *Z80) XOR_B() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.B
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -329,15 +329,15 @@ func (cpu *Z80) XOR_B() int {
 func (cpu *Z80) XOR_C() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.C
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -345,15 +345,15 @@ func (cpu *Z80) XOR_C() int {
 func (cpu *Z80) XOR_D() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.D
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -361,15 +361,15 @@ func (cpu *Z80) XOR_D() int {
 func (cpu *Z80) XOR_E() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.E
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -377,15 +377,15 @@ func (cpu *Z80) XOR_E() int {
 func (cpu *Z80) XOR_H() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.H
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -393,15 +393,15 @@ func (cpu *Z80) XOR_H() int {
 func (cpu *Z80) XOR_L() int {
 	// Calculate result
 	cpu.reg.A ^= cpu.reg.L
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 4
 }
 
@@ -409,18 +409,18 @@ func (cpu *Z80) XOR_L() int {
 func (cpu *Z80) XOR_HL() int {
 	// Get value from memory
 	value := cpu.mmu.ReadByte(cpu.reg.GetHL())
-	
+
 	// Calculate result
 	cpu.reg.A ^= value
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }
 
@@ -428,10 +428,10 @@ func (cpu *Z80) XOR_HL() int {
 func (cpu *Z80) XOR_A() int {
 	// A ^ A = 0
 	cpu.reg.A = 0
-	
+
 	// Set flags
 	cpu.reg.F = FLAG_Z // Set zero flag
-	
+
 	return 4
 }
 
@@ -440,17 +440,17 @@ func (cpu *Z80) XOR_d8() int {
 	// Get immediate value
 	value := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
-	
+
 	// Calculate result
 	cpu.reg.A ^= value
-	
+
 	// Set flags
 	cpu.reg.F = 0
-	
+
 	// Zero flag
 	if cpu.reg.A == 0 {
 		cpu.reg.SetFlag(FLAG_Z)
 	}
-	
+
 	return 8
 }

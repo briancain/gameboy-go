@@ -2,7 +2,7 @@ package gbcore
 
 // This file contains CB-prefixed bit set instructions:
 // - SET b,r (Set bit b of register r)
-// 
+//
 // These instructions set (set to 1) a specific bit in a register or memory location.
 // No flags are affected by these operations.
 
