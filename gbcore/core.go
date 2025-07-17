@@ -136,10 +136,10 @@ func (gb *GameBoyCore) runFrame() error {
 
 	// Debug output for frame
 	if gb.debug {
-		display := gb.Cpu.DisplayCPUFrame()
-		log.Print("[DEBUG] CPU Frame:\n", display)
-		clockdisplay := gb.Cpu.DisplayClock()
-		log.Print("[DEBUG] CPU Clock:\n", clockdisplay)
+		log.Print("[DEBUG] CPU Frame:")
+		gb.Cpu.DisplayCPUFrame()
+		log.Print("[DEBUG] CPU Clock:")
+		gb.Cpu.DisplayClock()
 	}
 
 	return nil

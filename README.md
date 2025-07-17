@@ -79,7 +79,3 @@ The implementation is based on various Game Boy documentation sources:
 - Pan Docs
 - Game Boy Programming Manual
 - Various online resources about Game Boy architecture
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
