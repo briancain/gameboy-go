@@ -13,6 +13,7 @@
 
 # Binary
 gameboy-go
+bin/
 roms/*
 
 # Docs

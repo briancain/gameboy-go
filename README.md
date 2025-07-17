@@ -71,18 +71,6 @@ This will create the executable in the `bin/` directory.
 make test
 ```
 
-### Code Formatting
-
-```
-make fmt
-```
-
-### Code Verification
-
-```
-make vet
-```
-
 ## Resources
 
 The implementation is based on various Game Boy documentation sources:
@@ -91,10 +79,6 @@ The implementation is based on various Game Boy documentation sources:
 - Pan Docs
 - Game Boy Programming Manual
 - Various online resources about Game Boy architecture
-
-## License
-
-This project is open source and available under the MIT License.
 
 ## Contributing
 
