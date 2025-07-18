@@ -14,13 +14,13 @@ The emulator is under active development with the following components implement
 - ✅ CPU emulation (Z80-like) with all instructions and proper timing
 - ✅ Basic memory management (MMU)
 - ✅ Cartridge loading
+- ✅ Timer system
 - ⚠️ Partial interrupt handling
 
 ## In Progress
 
 - 🔄 Memory Bank Controllers (MBC1, MBC2, MBC3, MBC5)
 - 🔄 Picture Processing Unit (PPU)
-- 🔄 Timer system
 - 🔄 Input handling
 
 ## Planned Features

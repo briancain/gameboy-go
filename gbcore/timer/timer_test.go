@@ -50,6 +50,7 @@ func TestTimerReset(t *testing.T) {
 	timer.tac = 0x42
 	timer.divCounter = 100
 	timer.timaCounter = 100
+	timer.prevTimerOn = true
 
 	// Reset the Timer
 	timer.Reset()
@@ -77,6 +78,10 @@ func TestTimerReset(t *testing.T) {
 
 	if timer.timaCounter != 0 {
 		t.Errorf("Expected timaCounter to be reset to 0, got %d", timer.timaCounter)
+	}
+
+	if timer.prevTimerOn != false {
+		t.Errorf("Expected prevTimerOn to be reset to false, got %v", timer.prevTimerOn)
 	}
 }
 
@@ -135,7 +140,7 @@ func TestTimerTIMA(t *testing.T) {
 	timer := NewTimer(mockMMU)
 
 	// Enable timer with 4096Hz frequency (1024 cycles per increment)
-	timer.tac = 0x04 // Timer enabled, 4096Hz
+	timer.tac = TAC_ENABLE // Timer enabled, 4096Hz
 
 	// Step the timer by 1024 cycles (should increment TIMA once)
 	timer.Step(1024)
@@ -177,10 +182,14 @@ func TestTimerFrequency(t *testing.T) {
 		cycles   int
 		expected byte
 	}{
-		{0x04, 1024, 1}, // 4096Hz (1024 cycles per increment)
-		{0x05, 16, 1},   // 262144Hz (16 cycles per increment)
-		{0x06, 64, 1},   // 65536Hz (64 cycles per increment)
-		{0x07, 256, 1},  // 16384Hz (256 cycles per increment)
+		{TAC_ENABLE, 1024, 1},       // 4096Hz (1024 cycles per increment)
+		{TAC_ENABLE | 0x01, 16, 1},  // 262144Hz (16 cycles per increment)
+		{TAC_ENABLE | 0x02, 64, 1},  // 65536Hz (64 cycles per increment)
+		{TAC_ENABLE | 0x03, 256, 1}, // 16384Hz (256 cycles per increment)
+		{TAC_ENABLE, 2048, 2},       // 4096Hz (2048 cycles = 2 increments)
+		{TAC_ENABLE | 0x01, 32, 2},  // 262144Hz (32 cycles = 2 increments)
+		{TAC_ENABLE | 0x02, 128, 2}, // 65536Hz (128 cycles = 2 increments)
+		{TAC_ENABLE | 0x03, 512, 2}, // 16384Hz (512 cycles = 2 increments)
 	}
 
 	for _, tc := range testCases {
@@ -223,6 +232,72 @@ func TestTimerDisabled(t *testing.T) {
 	// DIV should still increment
 	if timer.div == 0 {
 		t.Error("Expected DIV to increment even when timer is disabled")
+	}
+}
+
+// TestTimerEnableEdge tests the edge-triggered behavior when enabling the timer
+func TestTimerEnableEdge(t *testing.T) {
+	// Create a mock MMU
+	mockMMU := &MockMMU{}
+
+	// Create a new Timer
+	timer := NewTimer(mockMMU)
+
+	// Set initial state (timer disabled)
+	timer.tac = 0x00
+	timer.timaCounter = 500 // Set a non-zero counter
+
+	// Enable timer
+	timer.WriteRegister(0xFF07, TAC_ENABLE)
+
+	// Check that timaCounter was reset
+	if timer.timaCounter != 0 {
+		t.Errorf("Expected timaCounter to be reset when timer is enabled, got %d", timer.timaCounter)
+	}
+
+	// Check that timer is now enabled
+	if (timer.tac & TAC_ENABLE) == 0 {
+		t.Error("Expected timer to be enabled after writing TAC_ENABLE")
+	}
+}
+
+// TestMultipleOverflows tests multiple TIMA overflows in a single step
+func TestMultipleOverflows(t *testing.T) {
+	// Create a mock MMU
+	mockMMU := &MockMMU{}
+
+	// Create a new Timer
+	timer := NewTimer(mockMMU)
+
+	// Enable timer with 262144Hz frequency (16 cycles per increment)
+	timer.tac = TAC_ENABLE | 0x01
+	timer.tima = 0xFE // Almost at overflow
+	timer.tma = 0x42  // Modulo value
+
+	// Step the timer by 32 cycles (should cause 2 increments, 1 overflow)
+	timer.Step(32)
+
+	// Check that TIMA has the correct value
+	// 0xFE + 2 = 0x100, which overflows once and becomes 0x42
+	if timer.tima != 0x42 {
+		t.Errorf("Expected TIMA to be 0x42 after overflow, got %02X", timer.tima)
+	}
+
+	// Check that interrupt was requested
+	if mockMMU.interruptFlag&0x04 == 0 {
+		t.Error("Expected timer interrupt to be requested")
+	}
+
+	// Reset interrupt flag
+	mockMMU.interruptFlag = 0
+
+	// Step again to test another overflow
+	timer.Step(16)
+
+	// Check that TIMA has the correct value
+	// 0x42 + 1 = 0x43
+	if timer.tima != 0x43 {
+		t.Errorf("Expected TIMA to be 0x43 after second step, got %02X", timer.tima)
 	}
 }
 

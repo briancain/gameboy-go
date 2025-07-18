@@ -35,12 +35,19 @@ type MemoryManagedUnit struct {
 
 	// References to other components
 	cartridge Cartridge
+	timer     Timer
 }
 
 // Cartridge interface for memory banking
 type Cartridge interface {
 	ReadByte(addr uint16) byte
 	WriteByte(addr uint16, value byte)
+}
+
+// Timer interface for handling timer registers
+type Timer interface {
+	ReadRegister(addr uint16) byte
+	WriteRegister(addr uint16, value byte)
 }
 
 // Initialize a new MMU
@@ -113,6 +120,11 @@ func (m *MemoryManagedUnit) Reset() {
 // Set the cartridge
 func (m *MemoryManagedUnit) SetCartridge(cart Cartridge) {
 	m.cartridge = cart
+}
+
+// Set the timer
+func (m *MemoryManagedUnit) SetTimer(timer Timer) {
+	m.timer = timer
 }
 
 // Load BIOS
@@ -226,6 +238,15 @@ func (m *MemoryManagedUnit) readIO(addr uint16) byte {
 	case 0xFF00: // Joypad
 		// TODO: Implement joypad reading
 		return 0xFF
+	case 0xFF04, // DIV - Divider register
+		0xFF05, // TIMA - Timer counter
+		0xFF06, // TMA - Timer modulo
+		0xFF07: // TAC - Timer control
+		// These registers are handled by the timer component
+		if m.timer != nil {
+			return m.timer.ReadRegister(addr)
+		}
+		return m.io[addr-0xFF00]
 	default:
 		return m.io[addr-0xFF00]
 	}
@@ -238,9 +259,16 @@ func (m *MemoryManagedUnit) writeIO(addr uint16, value byte) {
 	case 0xFF00: // Joypad
 		// TODO: Implement joypad writing
 		m.io[0] = value
-	case 0xFF04: // DIV - Divider register
-		// Writing any value resets DIV to 0
-		m.io[0x04] = 0
+	case 0xFF04, // DIV - Divider register
+		0xFF05, // TIMA - Timer counter
+		0xFF06, // TMA - Timer modulo
+		0xFF07: // TAC - Timer control
+		// These registers are handled by the timer component
+		if m.timer != nil {
+			m.timer.WriteRegister(addr, value)
+		} else {
+			m.io[addr-0xFF00] = value
+		}
 	case 0xFF46: // DMA - OAM DMA transfer
 		m.doDMATransfer(value)
 	default:

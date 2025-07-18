@@ -11,6 +11,7 @@ import (
 	ppu "github.com/briancain/gameboy-go/gbcore/ppu"
 	snapshot "github.com/briancain/gameboy-go/gbcore/snapshot"
 	sound "github.com/briancain/gameboy-go/gbcore/sound"
+	timer "github.com/briancain/gameboy-go/gbcore/timer"
 )
 
 // Core emulator implementation
@@ -20,6 +21,7 @@ type GameBoyCore struct {
 	Mmu       *mmu.MemoryManagedUnit
 	Ppu       *ppu.PPU
 	Sound     *sound.Sound
+	Timer     *timer.Timer
 	Cartridge *cart.Cartridge
 
 	// Speed options
@@ -75,6 +77,12 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	// Initialize PPU with reference to MMU
 	gb.Ppu = ppu.NewPPU(gb.Mmu)
 
+	// Initialize Timer with reference to MMU
+	gb.Timer = timer.NewTimer(gb.Mmu)
+
+	// Set the timer in the MMU
+	gb.Mmu.SetTimer(gb.Timer)
+
 	// Initialize Sound
 	gb.Sound = sound.NewSound()
 
@@ -123,8 +131,8 @@ func (gb *GameBoyCore) runFrame() error {
 		// Update Sound
 		gb.Sound.Step(cycles)
 
-		// Update timers
-		// TODO: Implement timer
+		// Update Timer
+		gb.Timer.Step(cycles)
 
 		cyclesThisFrame += cycles
 
