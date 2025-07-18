@@ -2,7 +2,10 @@
 
 A GameBoy emulator written in Golang.
 
-This project aims to create a fully functional Game Boy emulator that can run commercial games. It's designed to be educational and help others learn about Game Boy architecture and emulation techniques.
+This project aims to create a fully functional Game Boy emulator that can run commercial games.
+It's designed to be educational and help others learn about Game Boy architecture and emulation techniques.
+
+It's heavily based off the GameBoy CPU manual found online for the Z80.
 
 ## Features
 
