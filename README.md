@@ -2,8 +2,8 @@
 
 A GameBoy emulator written in Golang.
 
-This project aims to create a fully functional Game Boy emulator that can run commercial games.
-It's designed to be educational and help others learn about Game Boy architecture and emulation techniques.
+This project aims to create a fully functional GameBoy emulator that can run commercial games.
+It's designed to be educational and help others learn about GameBoy architecture and emulation techniques.
 
 It's heavily based off the GameBoy CPU manual found online for the Z80.
 
@@ -40,7 +40,7 @@ This will create the executable in the `bin/` directory.
 
 ### Command Line Options
 
-- `-rom-file`: Path to the Game Boy ROM file (required)
+- `-rom-file`: Path to the GameBoy ROM file (required)
 - `-debug`: Enable debug output
 - `-scale`: Screen scale factor (1-4, default: 2)
 - `-headless`: Run without display (for testing)
@@ -76,9 +76,9 @@ make test
 
 ## Resources
 
-The implementation is based on various Game Boy documentation sources:
+The implementation is based on various GameBoy documentation sources:
 
-- Game Boy CPU Manual
+- GameBoy CPU Manual
 - Pan Docs
-- Game Boy Programming Manual
-- Various online resources about Game Boy architecture
+- GameBoy Programming Manual
+- Various online resources about GameBoy architecture
