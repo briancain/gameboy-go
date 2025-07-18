@@ -185,39 +185,39 @@ func TestHALTBug(t *testing.T) {
 
 	// Set PC to the HALT instruction
 	cpu.reg.PC = 0x0100
-	
+
 	// Set A register to a known value
 	cpu.reg.A = 0x10
-	
+
 	// Execute HALT instruction via Step
 	cpu.Step()
-	
+
 	// The HALT bug should be triggered
 	if cpu.reg.PC != 0x0101 {
 		t.Errorf("HALT bug: Expected PC to be 0x0101 after HALT, got %04X", cpu.reg.PC)
 	}
-	
+
 	// Execute next instruction (INC A)
 	cpu.Step()
-	
+
 	// A should be incremented
 	if cpu.reg.A != 0x11 {
 		t.Errorf("HALT bug: Expected A to be 0x11 after first execution, got %02X", cpu.reg.A)
 	}
-	
+
 	// Due to the HALT bug, the PC should still point to the INC A instruction
 	if cpu.reg.PC != 0x0101 {
 		t.Errorf("HALT bug: Expected PC to still be 0x0101 after first execution, got %04X", cpu.reg.PC)
 	}
-	
+
 	// Execute INC A again (due to HALT bug)
 	cpu.Step()
-	
+
 	// A should be incremented again
 	if cpu.reg.A != 0x12 {
 		t.Errorf("HALT bug: Expected A to be 0x12 after second execution, got %02X", cpu.reg.A)
 	}
-	
+
 	// Now PC should move to the next instruction
 	if cpu.reg.PC != 0x0102 {
 		t.Errorf("HALT bug: Expected PC to be 0x0102 after second execution, got %04X", cpu.reg.PC)
