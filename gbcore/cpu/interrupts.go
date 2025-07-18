@@ -26,6 +26,7 @@ func (cpu *Z80) handleInterrupts() {
 
 	// Calculate pending interrupts
 	pendingInterrupts := interruptFlag & interruptEnable & 0x1F
+	cpu.pendingInterrupts = pendingInterrupts
 
 	// If there are no pending interrupts, return
 	if pendingInterrupts == 0 {
@@ -38,35 +39,40 @@ func (cpu *Z80) handleInterrupts() {
 	// Handle interrupts in priority order
 	if pendingInterrupts&INT_VBLANK != 0 {
 		// Clear the interrupt flag
-		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_VBLANK)
+		cpu.mmu.WriteByte(0xFF0F, interruptFlag&(^byte(INT_VBLANK)))
+		cpu.pendingInterrupts &= (^byte(INT_VBLANK))
 
 		// Call the interrupt handler
 		cpu.callInterrupt(VBLANK_VECTOR)
 
 	} else if pendingInterrupts&INT_LCDC != 0 {
 		// Clear the interrupt flag
-		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_LCDC)
+		cpu.mmu.WriteByte(0xFF0F, interruptFlag&(^byte(INT_LCDC)))
+		cpu.pendingInterrupts &= (^byte(INT_LCDC))
 
 		// Call the interrupt handler
 		cpu.callInterrupt(LCDC_VECTOR)
 
 	} else if pendingInterrupts&INT_TIMER != 0 {
 		// Clear the interrupt flag
-		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_TIMER)
+		cpu.mmu.WriteByte(0xFF0F, interruptFlag&(^byte(INT_TIMER)))
+		cpu.pendingInterrupts &= (^byte(INT_TIMER))
 
 		// Call the interrupt handler
 		cpu.callInterrupt(TIMER_VECTOR)
 
 	} else if pendingInterrupts&INT_SERIAL != 0 {
 		// Clear the interrupt flag
-		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_SERIAL)
+		cpu.mmu.WriteByte(0xFF0F, interruptFlag&(^byte(INT_SERIAL)))
+		cpu.pendingInterrupts &= (^byte(INT_SERIAL))
 
 		// Call the interrupt handler
 		cpu.callInterrupt(SERIAL_VECTOR)
 
 	} else if pendingInterrupts&INT_JOYPAD != 0 {
 		// Clear the interrupt flag
-		cpu.mmu.WriteByte(0xFF0F, interruptFlag&^INT_JOYPAD)
+		cpu.mmu.WriteByte(0xFF0F, interruptFlag&(^byte(INT_JOYPAD)))
+		cpu.pendingInterrupts &= (^byte(INT_JOYPAD))
 
 		// Call the interrupt handler
 		cpu.callInterrupt(JOYPAD_VECTOR)

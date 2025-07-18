@@ -16,7 +16,17 @@ func (cpu *Z80) NOP() int {
 
 // 0x76: HALT - Halt the CPU until an interrupt occurs
 func (cpu *Z80) HALT() int {
-	cpu.halted = true
+	// Check for HALT bug: If IME=0 and IE & IF != 0, the HALT bug occurs
+	interruptFlag := cpu.mmu.ReadByte(0xFF0F) & 0x1F
+	interruptEnable := cpu.mmu.ReadByte(0xFFFF) & 0x1F
+
+	if !cpu.interruptMaster && (interruptFlag&interruptEnable) != 0 {
+		// HALT bug: The next instruction will be executed twice
+		cpu.haltBug = true
+	} else {
+		cpu.halted = true
+	}
+
 	return 4
 }
 
@@ -30,13 +40,15 @@ func (cpu *Z80) STOP() int {
 
 // 0xF3: DI - Disable interrupts
 func (cpu *Z80) DI() int {
-	cpu.interruptMaster = false
+	// Interrupts are disabled after the next instruction
+	cpu.interruptDisableScheduled = true
 	return 4
 }
 
 // 0xFB: EI - Enable interrupts
 func (cpu *Z80) EI() int {
-	cpu.interruptMaster = true
+	// Interrupts are enabled after the next instruction
+	cpu.interruptEnableScheduled = true
 	return 4
 }
 

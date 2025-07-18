@@ -1257,8 +1257,8 @@ func TestSpecialInstructions(t *testing.T) {
 	// Test DI (disable interrupts)
 	cpu.interruptMaster = true
 	cycles = cpu.DI()
-	if cpu.interruptMaster {
-		t.Error("DI: Expected interrupts to be disabled")
+	if !cpu.interruptDisableScheduled {
+		t.Error("DI: Expected interrupt disable to be scheduled")
 	}
 	if cycles != 4 {
 		t.Errorf("DI: Expected 4 cycles, got %d", cycles)
@@ -1267,8 +1267,8 @@ func TestSpecialInstructions(t *testing.T) {
 	// Test EI (enable interrupts)
 	cpu.interruptMaster = false
 	cycles = cpu.EI()
-	if !cpu.interruptMaster {
-		t.Error("EI: Expected interrupts to be enabled")
+	if !cpu.interruptEnableScheduled {
+		t.Error("EI: Expected interrupt enable to be scheduled")
 	}
 	if cycles != 4 {
 		t.Errorf("EI: Expected 4 cycles, got %d", cycles)

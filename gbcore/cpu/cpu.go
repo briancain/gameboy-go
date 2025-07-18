@@ -22,12 +22,17 @@ type Z80 struct {
 	// Interrupt master enable flag
 	interruptMaster bool
 
+	// Interrupt scheduling flags
+	interruptEnableScheduled  bool
+	interruptDisableScheduled bool
+
 	// Pending interrupts
 	pendingInterrupts byte
 
 	// CPU state
 	halted  bool
 	stopped bool
+	haltBug bool
 }
 
 // Registers represents the CPU registers
@@ -120,12 +125,28 @@ func NewCPU(mmu MMU) (*Z80, error) {
 
 // Step executes one instruction and returns the number of cycles taken
 func (cpu *Z80) Step() int {
+	// Save the interrupt enable/disable scheduled flags
+	interruptEnableScheduled := cpu.interruptEnableScheduled
+	interruptDisableScheduled := cpu.interruptDisableScheduled
+
+	// Clear the scheduled flags
+	cpu.interruptEnableScheduled = false
+	cpu.interruptDisableScheduled = false
+
+	// Update pending interrupts
+	interruptFlag := cpu.mmu.ReadByte(0xFF0F)
+	interruptEnable := cpu.mmu.ReadByte(0xFFFF)
+	cpu.pendingInterrupts = interruptFlag & interruptEnable & 0x1F
+
 	// Handle interrupts
 	if cpu.interruptMaster && cpu.pendingInterrupts > 0 {
 		cpu.halted = false
 		cpu.stopped = false
 		// Process interrupts
 		cpu.handleInterrupts()
+
+		// Return cycles for interrupt handling (5 machine cycles)
+		return 20
 	}
 
 	// If CPU is halted or stopped, just return cycles for one machine cycle
@@ -140,8 +161,22 @@ func (cpu *Z80) Step() int {
 	opcode := cpu.mmu.ReadByte(cpu.reg.PC)
 	cpu.reg.PC++
 
+	// Handle HALT bug
+	if cpu.haltBug {
+		cpu.reg.PC-- // Execute the same instruction again
+		cpu.haltBug = false
+	}
+
 	// Execute instruction
 	cycles := cpu.executeInstruction(opcode)
+
+	// Handle delayed interrupt enable/disable
+	if interruptEnableScheduled {
+		cpu.interruptMaster = true
+	}
+	if interruptDisableScheduled {
+		cpu.interruptMaster = false
+	}
 
 	// Update clock
 	cpu.clock.t += cycles
@@ -170,11 +205,14 @@ func (cpu *Z80) ResetCPU() {
 
 	// Initialize interrupt state
 	cpu.interruptMaster = false
+	cpu.interruptEnableScheduled = false
+	cpu.interruptDisableScheduled = false
 	cpu.pendingInterrupts = 0
 
 	// Initialize CPU state
 	cpu.halted = false
 	cpu.stopped = false
+	cpu.haltBug = false
 }
 
 // ResetClock resets the CPU clock
