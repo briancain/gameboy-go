@@ -21,7 +21,9 @@ func (cpu *Z80) HALT() int {
 	interruptEnable := cpu.mmu.ReadByte(0xFFFF) & 0x1F
 
 	if !cpu.interruptMaster && (interruptFlag&interruptEnable) != 0 {
-		// HALT bug: The next instruction will be executed twice
+		// HALT bug: When interrupts are disabled (IME=0) and there are pending interrupts (IE & IF != 0),
+		// the instruction following HALT is "skipped" (PC doesn't increment after fetching the opcode)
+		// This causes the next instruction to be executed twice
 		cpu.haltBug = true
 	} else {
 		cpu.halted = true

@@ -159,11 +159,14 @@ func (cpu *Z80) Step() int {
 
 	// Fetch opcode
 	opcode := cpu.mmu.ReadByte(cpu.reg.PC)
-	cpu.reg.PC++
-
+	
 	// Handle HALT bug
-	if cpu.haltBug {
-		cpu.reg.PC-- // Execute the same instruction again
+	// According to the manual, when the HALT bug occurs, the PC doesn't increment
+	// after fetching the opcode, causing the next instruction to be executed twice
+	if !cpu.haltBug {
+		cpu.reg.PC++
+	} else {
+		// Clear the HALT bug flag after it's been handled
 		cpu.haltBug = false
 	}
 
