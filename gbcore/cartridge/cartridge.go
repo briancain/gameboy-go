@@ -57,6 +57,9 @@ type Cartridge struct {
 	// raw byte stream of ROM data
 	rom []byte
 
+	// Directory to store battery-backed save files
+	batterySaveDir string
+
 	// RAM size code
 	ramSize byte
 
@@ -132,7 +135,7 @@ func (c *Cartridge) initMBC() error {
 		c.mbc = &ROMOnly{rom: c.rom, ram: make([]byte, ramSizeBytes)}
 
 	case CART_MBC1, CART_MBC1_RAM, CART_MBC1_RAM_BAT:
-		c.mbc = NewMBC1(c.rom, int(ramSizeBytes))
+		c.mbc = NewMBC1(c.rom, int(ramSizeBytes), c.cartType, c.title, c.batterySaveDir)
 
 	// Add more MBC types as needed
 
@@ -196,7 +199,13 @@ func NewCartridge(cartPath string) (*Cartridge, error) {
 	}
 
 	// we'll load cart title directly from the ROM data on init
-	return &Cartridge{title: "", filePath: cartPath}, nil
+	return &Cartridge{title: "", filePath: cartPath, batterySaveDir: "."}, nil
+}
+
+// SetSaveDirectory sets the directory where battery-backed save files will be stored
+func (c *Cartridge) SetSaveDirectory(dir string) {
+	c.batterySaveDir = dir
+	log.Printf("[Cartridge] Battery save directory set to: %s", dir)
 }
 
 // Read a byte from the cartridge
@@ -209,10 +218,16 @@ func (c *Cartridge) WriteByte(addr uint16, value byte) {
 	c.mbc.WriteByte(addr, value)
 }
 
+// GetMBC returns the Memory Bank Controller for this cartridge
+func (c *Cartridge) GetMBC() MBC {
+	return c.mbc
+}
+
 // A generic Memory Bank Controller interface.
 type MBC interface {
 	ReadByte(addr uint16) byte
 	WriteByte(addr uint16, value byte)
+	SaveBatteryRAM() // Save battery-backed RAM to file (if supported)
 }
 
 // ROM Only (no MBC) implementation
@@ -253,6 +268,11 @@ func (r *ROMOnly) WriteByte(addr uint16, value byte) {
 			r.ram[ramAddr] = value
 		}
 	}
+}
+
+// SaveBatteryRAM does nothing for ROM-only cartridges
+func (r *ROMOnly) SaveBatteryRAM() {
+	// ROM-only cartridges don't have battery-backed RAM
 }
 
 // https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type

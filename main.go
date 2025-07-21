@@ -12,11 +12,12 @@ import (
 )
 
 var (
-	CartridgePath string
-	Help          bool
-	DebugOutput   bool
-	Scale         int
-	Headless      bool
+	CartridgePath  string
+	Help           bool
+	DebugOutput    bool
+	Scale          int
+	Headless       bool
+	BatterySaveDir string
 )
 
 func init() {
@@ -25,6 +26,12 @@ func init() {
 	flag.BoolVar(&DebugOutput, "debug", false, "Displays debug output")
 	flag.IntVar(&Scale, "scale", 2, "Screen scale factor (1-4)")
 	flag.BoolVar(&Headless, "headless", false, "Run without display (for testing)")
+	// Default to current directory for save files
+	currentDir, err := os.Getwd()
+	if err != nil {
+		currentDir = "."
+	}
+	flag.StringVar(&BatterySaveDir, "battery-save-dir", currentDir, "Directory to store battery-backed save files from cartridges (e.g., game progress)")
 }
 
 func startEmulator() error {
@@ -34,6 +41,9 @@ func startEmulator() error {
 		log.Print("Failed to create new gbcore: ", err)
 		return err
 	}
+
+	// Set the save directory
+	gb.SetSaveDirectory(BatterySaveDir)
 
 	if err := gb.Init(CartridgePath); err != nil {
 		log.Print("[ERROR] Failed to initialize new gbcore!\n", err)

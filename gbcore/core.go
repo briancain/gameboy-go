@@ -32,8 +32,9 @@ type GameBoyCore struct {
 	Snapshots []snapshot.Snapshot
 
 	// Private vars
-	exit  bool
-	debug bool
+	exit           bool
+	debug          bool
+	batterySaveDir string
 
 	// Timing
 	cyclesPerFrame int
@@ -59,6 +60,11 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 		return err
 	}
 	gb.Cartridge = crt
+
+	// Set the save directory for the cartridge
+	if gb.batterySaveDir != "" {
+		crt.SetSaveDirectory(gb.batterySaveDir)
+	}
 
 	// Load the cartridge rom file from disk
 	if err := crt.LoadCartridge(); err != nil {
@@ -184,5 +190,17 @@ func (gb *GameBoyCore) SaveState() error {
 
 // Set the exit flag to true to stop the emulator
 func (gb *GameBoyCore) Exit() {
+	// Save battery RAM if available
+	if gb.Cartridge != nil && gb.Cartridge.GetMBC() != nil {
+		log.Println("[Core] Saving battery RAM...")
+		gb.Cartridge.GetMBC().SaveBatteryRAM()
+	}
+
 	gb.exit = true
+}
+
+// SetSaveDirectory sets the directory where battery-backed save files will be stored
+func (gb *GameBoyCore) SetSaveDirectory(dir string) {
+	gb.batterySaveDir = dir
+	log.Printf("[Core] Battery save directory set to: %s", dir)
 }

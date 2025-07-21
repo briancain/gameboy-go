@@ -52,7 +52,15 @@ func TestMBC1(t *testing.T) {
 	rom[0x8100] = 0x44 // Bank 2
 	rom[0xC100] = 0x45 // Bank 3
 
-	mbc := NewMBC1(rom, 8*1024)
+	// Create a temporary directory for save files
+	tmpDir, err := os.MkdirTemp("", "gameboy_test")
+	if err != nil {
+		t.Fatalf("Failed to create temporary directory: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Create MBC1 with ROM banking mode (default)
+	mbc := NewMBC1(rom, 8*1024, CART_MBC1_RAM, "TESTROM", tmpDir)
 
 	// Test ROM bank 0 (fixed)
 	if mbc.ReadByte(0x100) != 0x42 {
