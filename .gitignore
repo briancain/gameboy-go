@@ -12,7 +12,7 @@
 *.out
 
 # Binary
-gameboy-go
+/gameboy-go
 bin/
 roms/*
 
