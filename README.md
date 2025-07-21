@@ -16,10 +16,13 @@ The emulator is under active development with the following components implement
 - ✅ Cartridge loading
 - ✅ Timer system
 - ⚠️ Partial interrupt handling
+- ✅ Memory Bank Controllers (MBC1, MBC2, MBC3, MBC5)
+  - ✅ Battery-backed save support
+  - ✅ Real-Time Clock (RTC) for MBC3
+  - ✅ Rumble support for MBC5
 
 ## In Progress
 
-- 🔄 Memory Bank Controllers (MBC1, MBC2, MBC3, MBC5)
 - 🔄 Picture Processing Unit (PPU)
 - 🔄 Input handling
 
@@ -32,11 +35,12 @@ The emulator is under active development with the following components implement
 
 ## Supported Cartridge Types
 
-Currently implementing:
+Currently implemented:
 - ROM Only
-- MBC1
-- MBC1+RAM
-- MBC1+RAM+BATTERY
+- MBC1, MBC1+RAM, MBC1+RAM+BATTERY
+- MBC2, MBC2+BATTERY
+- MBC3, MBC3+RAM, MBC3+RAM+BATTERY, MBC3+TIMER+BATTERY, MBC3+TIMER+RAM+BATTERY
+- MBC5, MBC5+RAM, MBC5+RAM+BATTERY, MBC5+RUMBLE, MBC5+RUMBLE+RAM, MBC5+RUMBLE+RAM+BATTERY
 
 ## How to Build
 
