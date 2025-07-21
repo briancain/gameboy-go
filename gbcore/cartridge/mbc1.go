@@ -276,3 +276,8 @@ func (mbc *MBC1) loadRAM() {
 func (mbc *MBC1) SaveBatteryRAM() {
 	mbc.saveRAM()
 }
+
+// IsRumbling always returns false for MBC1 cartridges
+func (mbc *MBC1) IsRumbling() bool {
+	return false
+}

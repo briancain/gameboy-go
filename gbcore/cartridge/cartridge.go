@@ -137,6 +137,15 @@ func (c *Cartridge) initMBC() error {
 	case CART_MBC1, CART_MBC1_RAM, CART_MBC1_RAM_BAT:
 		c.mbc = NewMBC1(c.rom, int(ramSizeBytes), c.cartType, c.title, c.batterySaveDir)
 
+	case CART_MBC2, CART_MBC2_BAT:
+		c.mbc = NewMBC2(c.rom, c.cartType, c.title, c.batterySaveDir)
+
+	case CART_MBC3, CART_MBC3_RAM, CART_MBC3_RAM_BAT, CART_MBC3_TIMER_BAT, CART_MBC3_TIMER_RAM_BAT:
+		c.mbc = NewMBC3(c.rom, int(ramSizeBytes), c.cartType, c.title, c.batterySaveDir)
+
+	case CART_MBC5, CART_MBC5_RAM, CART_MBC5_RAM_BAT, CART_MBC5_RUMBLE, CART_MBC5_RUMBLE_RAM, CART_MBC5_RUMBLE_RAM_BAT:
+		c.mbc = NewMBC5(c.rom, int(ramSizeBytes), c.cartType, c.title, c.batterySaveDir)
+
 	// Add more MBC types as needed
 
 	default:
@@ -227,7 +236,8 @@ func (c *Cartridge) GetMBC() MBC {
 type MBC interface {
 	ReadByte(addr uint16) byte
 	WriteByte(addr uint16, value byte)
-	SaveBatteryRAM() // Save battery-backed RAM to file (if supported)
+	SaveBatteryRAM()  // Save battery-backed RAM to file (if supported)
+	IsRumbling() bool // Returns true if the cartridge has rumble and it's active
 }
 
 // ROM Only (no MBC) implementation
@@ -273,6 +283,11 @@ func (r *ROMOnly) WriteByte(addr uint16, value byte) {
 // SaveBatteryRAM does nothing for ROM-only cartridges
 func (r *ROMOnly) SaveBatteryRAM() {
 	// ROM-only cartridges don't have battery-backed RAM
+}
+
+// IsRumbling always returns false for ROM-only cartridges
+func (r *ROMOnly) IsRumbling() bool {
+	return false
 }
 
 // https://gbdev.io/pandocs/The_Cartridge_Header.html#0147---cartridge-type
