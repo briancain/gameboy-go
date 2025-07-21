@@ -54,11 +54,12 @@ This will create the executable in the `bin/` directory.
 
 ### Command Line Options
 
-- `-rom-file`: Path to the GameBoy ROM file (required)
+- `-battery-save-dir` Directory to store battery-backed save files from cartridges (e.g., game progress)
 - `-debug`: Enable debug output
-- `-scale`: Screen scale factor (1-4, default: 2)
 - `-headless`: Run without display (for testing)
 - `-help`: Display help information
+- `-rom-file`: Path to the GameBoy ROM file (required)
+- `-scale`: Screen scale factor (1-4, default: 2)
 
 ## Controls
 
