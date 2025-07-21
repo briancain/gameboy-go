@@ -20,11 +20,11 @@ The emulator is under active development with the following components implement
   - ✅ Battery-backed save support
   - ✅ Real-Time Clock (RTC) for MBC3
   - ✅ Rumble support for MBC5
+- ✅ Input handling with joypad interrupts
 
 ## In Progress
 
 - 🔄 Picture Processing Unit (PPU)
-- 🔄 Input handling
 
 ## Planned Features
 

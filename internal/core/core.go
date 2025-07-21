@@ -96,6 +96,9 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	gb.Controller = controller.NewKeyboard()
 	gb.Controller.Init()
 
+	// Set the controller in the MMU
+	gb.Mmu.SetController(gb.Controller)
+
 	return nil
 }
 
@@ -110,7 +113,14 @@ func (gb *GameBoyCore) Run() error {
 		}
 
 		// Process controller input
-		gb.Controller.Update()
+		if gb.Controller.Update() {
+			// Check if a joypad interrupt should be triggered
+			if gb.Controller.CheckInterrupt() {
+				// Set the joypad interrupt flag (bit 4)
+				interruptFlags := gb.Mmu.ReadByte(0xFF0F)
+				gb.Mmu.WriteByte(0xFF0F, interruptFlags|0x10)
+			}
+		}
 
 		// Throttle to target FPS
 		gb.throttleFPS()
@@ -194,6 +204,11 @@ func (gb *GameBoyCore) Exit() {
 	if gb.Cartridge != nil && gb.Cartridge.GetMBC() != nil {
 		log.Println("[Core] Saving battery RAM...")
 		gb.Cartridge.GetMBC().SaveBatteryRAM()
+	}
+
+	// Clean up controller resources
+	if gb.Controller != nil {
+		gb.Controller.Cleanup()
 	}
 
 	gb.exit = true

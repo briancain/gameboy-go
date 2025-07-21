@@ -34,8 +34,9 @@ type MemoryManagedUnit struct {
 	biosActive bool // Whether BIOS is active
 
 	// References to other components
-	cartridge Cartridge
-	timer     Timer
+	cartridge  Cartridge
+	timer      Timer
+	controller Controller
 }
 
 // Cartridge interface for memory banking
@@ -48,6 +49,12 @@ type Cartridge interface {
 type Timer interface {
 	ReadRegister(addr uint16) byte
 	WriteRegister(addr uint16, value byte)
+}
+
+// Controller interface for handling joypad input
+type Controller interface {
+	ReadJoypad() byte
+	WriteJoypad(value byte)
 }
 
 // Initialize a new MMU
@@ -125,6 +132,11 @@ func (m *MemoryManagedUnit) SetCartridge(cart Cartridge) {
 // Set the timer
 func (m *MemoryManagedUnit) SetTimer(timer Timer) {
 	m.timer = timer
+}
+
+// Set the controller
+func (m *MemoryManagedUnit) SetController(controller Controller) {
+	m.controller = controller
 }
 
 // Load BIOS
@@ -236,7 +248,9 @@ func (m *MemoryManagedUnit) readIO(addr uint16) byte {
 	// Handle special I/O registers
 	switch addr {
 	case 0xFF00: // Joypad
-		// TODO: Implement joypad reading
+		if m.controller != nil {
+			return m.controller.ReadJoypad()
+		}
 		return 0xFF
 	case 0xFF04, // DIV - Divider register
 		0xFF05, // TIMA - Timer counter
@@ -257,7 +271,9 @@ func (m *MemoryManagedUnit) writeIO(addr uint16, value byte) {
 	// Handle special I/O registers
 	switch addr {
 	case 0xFF00: // Joypad
-		// TODO: Implement joypad writing
+		if m.controller != nil {
+			m.controller.WriteJoypad(value)
+		}
 		m.io[0] = value
 	case 0xFF04, // DIV - Divider register
 		0xFF05, // TIMA - Timer counter
