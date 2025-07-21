@@ -75,14 +75,17 @@ This will create the executable in the `bin/` directory.
 
 ## Project Structure
 
-- `gbcore/`: Core emulator components
+- `cmd/gameboy-go/`: Main application entry point
+- `internal/`: Core emulator components (private)
+  - `cartridge/`: Cartridge and MBC implementations
+  - `controller/`: Input handling
+  - `core/`: Core emulator functionality
   - `cpu/`: CPU implementation
   - `mmu/`: Memory management unit
   - `ppu/`: Picture processing unit (graphics)
-  - `cartridge/`: Cartridge and MBC implementations
+  - `snapshot/`: Save state functionality
   - `sound/`: Sound system
   - `timer/`: Timer implementation
-- `controller/`: Input handling
 - `docs/`: Documentation
 
 ## Development

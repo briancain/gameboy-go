@@ -11,7 +11,7 @@ LDFLAGS="-X $(GIT_IMPORT).Version=$(VERSION) -X $(GIT_IMPORT).Ref=$(REF)"
 default: build
 
 build:
-	go build -ldflags $(LDFLAGS) -o bin/${BINARY}
+	go build -ldflags $(LDFLAGS) -o bin/${BINARY} ./cmd/gameboy-go
 
 run:
 	./bin/${BINARY} $(ARGS)
