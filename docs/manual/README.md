@@ -1,0 +1,1 @@
+# GameBoy Go Manual
