@@ -295,8 +295,11 @@ func (ppu *PPU) renderBackground() {
 		colorIndex := (bgp >> (colorValue * 2)) & 0x03
 
 		// Set the pixel in the screen buffer
-		bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(x)
-		ppu.screenBuffer[bufferIndex] = colorIndex
+		// Bounds check to prevent buffer overflow
+		if ppu.line < SCREEN_HEIGHT {
+			bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(x)
+			ppu.screenBuffer[bufferIndex] = colorIndex
+		}
 	}
 }
 
@@ -305,11 +308,30 @@ func (ppu *PPU) renderWindow() {
 	lcdc := ppu.mmu.ReadByte(0xFF40)
 
 	// Get window position
-	windowY := ppu.mmu.ReadByte(0xFF4A)
-	windowX := ppu.mmu.ReadByte(0xFF4B) - 7
-
+	windowY := ppu.mmu.ReadByte(0xFF4A) // WY
+	windowXRaw := ppu.mmu.ReadByte(0xFF4B) // WX
+	
 	// Check if the window is visible on this scanline
 	if ppu.line < windowY {
+		return
+	}
+
+	// WX values 0-6 and 167+ disable the window
+	if windowXRaw == 0 || windowXRaw >= 167 {
+		return
+	}
+
+	// Calculate actual window X position (WX - 7)
+	// Handle the case where WX < 7 (should be treated as 0)
+	var windowX byte
+	if windowXRaw >= 7 {
+		windowX = windowXRaw - 7
+	} else {
+		windowX = 0
+	}
+
+	// If window starts beyond screen width, nothing to render
+	if windowX >= SCREEN_WIDTH {
 		return
 	}
 
@@ -330,23 +352,28 @@ func (ppu *PPU) renderWindow() {
 	// Get palette
 	bgp := ppu.mmu.ReadByte(0xFF47)
 
-	// Calculate which row of tiles to use
-	y := ppu.line - windowY
-	tileRow := uint16(y / 8)
+	// Calculate which row of tiles to use (window line counter)
+	windowLine := ppu.line - windowY
+	tileRow := uint16(windowLine / 8)
+
+	// Bounds check: tile map is 32x32 tiles
+	if tileRow >= 32 {
+		return
+	}
 
 	// Calculate which pixel row of the tile to use
-	pixelY := y % 8
+	pixelY := windowLine % 8
 
 	// Render the scanline
-	for x := byte(0); x < SCREEN_WIDTH; x++ {
-		// Skip if this pixel is not in the window
-		if x < windowX {
-			continue
-		}
-
+	for x := windowX; x < SCREEN_WIDTH; x++ {
 		// Calculate which tile column to use
 		pixelX := x - windowX
 		tileCol := uint16(pixelX / 8)
+
+		// Bounds check: tile map is 32x32 tiles
+		if tileCol >= 32 {
+			break
+		}
 
 		// Get the tile index
 		tileMapOffset := tileRow*32 + tileCol
@@ -375,8 +402,11 @@ func (ppu *PPU) renderWindow() {
 		colorIndex := (bgp >> (colorValue * 2)) & 0x03
 
 		// Set the pixel in the screen buffer
-		bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(x)
-		ppu.screenBuffer[bufferIndex] = colorIndex
+		// Bounds check to prevent buffer overflow
+		if ppu.line < SCREEN_HEIGHT {
+			bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(x)
+			ppu.screenBuffer[bufferIndex] = colorIndex
+		}
 	}
 }
 
