@@ -27,8 +27,11 @@ jobs:
           libxinerama-dev \
           libxcursor-dev \
           libxi-dev \
+          libxext-dev \
+          libxxf86vm-dev \
           libgl1-mesa-dev \
-          libasound2-dev
+          libasound2-dev \
+          pkg-config
 
     - name: Verify dependencies
       run: |
