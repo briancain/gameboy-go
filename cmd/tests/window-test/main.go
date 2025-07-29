@@ -54,38 +54,38 @@ func main() {
 
 	// Reset PPU and manually test window rendering on line 0
 	ppuInstance.Reset()
-	
+
 	// The issue is that we need to test the window rendering when PPU is actually on line 0
 	// Let's create a simple test by directly calling the render functions
-	
+
 	// First, let's see what happens with background rendering
 	fmt.Println("Testing background rendering on line 0...")
-	
+
 	// Set up background tile data too
 	mmu.WriteByte(0x8010, 0xAA) // Tile 1, line 0, low byte (alternating pattern)
 	mmu.WriteByte(0x8011, 0x55) // Tile 1, line 0, high byte
 	mmu.WriteByte(0x9800, 0x01) // Background tile map entry 0 -> use tile 1
-	
+
 	// Clear buffer
 	for i := range buffer {
 		buffer[i] = 0
 	}
-	
+
 	// We need to simulate being on line 0 in VRAM mode
 	// Let's step the PPU carefully
 	stepCount := 0
 	for stepCount < 1000 { // Safety limit
 		ppuInstance.Step(1)
 		stepCount++
-		
+
 		line := ppuInstance.GetCurrentLine()
 		mode := ppuInstance.GetCurrentMode()
-		
+
 		if line == 0 && mode == 3 { // VRAM mode on line 0
 			fmt.Printf("Found line 0, VRAM mode after %d steps\n", stepCount)
 			break
 		}
-		
+
 		if line > 0 {
 			fmt.Printf("Moved to line %d, resetting...\n", line)
 			ppuInstance.Reset()
@@ -103,7 +103,7 @@ func main() {
 
 	// Test different WX values
 	fmt.Println("\nTesting different WX values:")
-	
+
 	testCases := []struct {
 		wx   byte
 		desc string
@@ -118,20 +118,20 @@ func main() {
 	for _, tc := range testCases {
 		fmt.Printf("\n%s:\n", tc.desc)
 		mmu.WriteByte(0xFF4B, tc.wx)
-		
+
 		// Clear buffer
 		for i := range buffer {
 			buffer[i] = 0
 		}
-		
+
 		// Reset PPU to line 0
 		ppuInstance.Reset()
-		
+
 		// Step to render one scanline
 		for i := 0; i < 456; i++ {
 			ppuInstance.Step(1)
 		}
-		
+
 		// Show first 5 pixels
 		for i := 0; i < 5; i++ {
 			fmt.Printf("  Pixel %d: %d\n", i, buffer[i])

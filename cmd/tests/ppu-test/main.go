@@ -62,10 +62,10 @@ func main() {
 		// Simulate one scanline worth of cycles
 		// OAM (80) + VRAM (172) + HBLANK (204) = 456 cycles per line
 		ppuInstance.Step(456)
-		
-		fmt.Printf("Line %d: Mode=%d, Clock=%d\n", 
-			ppuInstance.GetCurrentLine(), 
-			ppuInstance.GetCurrentMode(), 
+
+		fmt.Printf("Line %d: Mode=%d, Clock=%d\n",
+			ppuInstance.GetCurrentLine(),
+			ppuInstance.GetCurrentMode(),
 			ppuInstance.GetModeClock())
 	}
 

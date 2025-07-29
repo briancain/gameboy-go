@@ -308,9 +308,9 @@ func (ppu *PPU) renderWindow() {
 	lcdc := ppu.mmu.ReadByte(0xFF40)
 
 	// Get window position
-	windowY := ppu.mmu.ReadByte(0xFF4A) // WY
+	windowY := ppu.mmu.ReadByte(0xFF4A)    // WY
 	windowXRaw := ppu.mmu.ReadByte(0xFF4B) // WX
-	
+
 	// Check if the window is visible on this scanline
 	if ppu.line < windowY {
 		return
@@ -530,14 +530,14 @@ func (ppu *PPU) GetScreenBufferRGB() []byte {
 	}
 
 	rgbBuffer := make([]byte, SCREEN_WIDTH*SCREEN_HEIGHT*3)
-	
+
 	for i, colorIndex := range ppu.screenBuffer {
 		rgb := colorMap[colorIndex&0x03] // Ensure we only use 2 bits
-		rgbBuffer[i*3] = rgb[0]     // R
-		rgbBuffer[i*3+1] = rgb[1]   // G
-		rgbBuffer[i*3+2] = rgb[2]   // B
+		rgbBuffer[i*3] = rgb[0]          // R
+		rgbBuffer[i*3+1] = rgb[1]        // G
+		rgbBuffer[i*3+2] = rgb[2]        // B
 	}
-	
+
 	return rgbBuffer
 }
 
@@ -573,14 +573,14 @@ func (ppu *PPU) IsLCDEnabled() bool {
 func (ppu *PPU) GetLCDCStatus() map[string]bool {
 	lcdc := ppu.mmu.ReadByte(0xFF40)
 	return map[string]bool{
-		"display_enable":    (lcdc & LCDC_DISPLAY_ENABLE) != 0,
-		"window_tilemap":    (lcdc & LCDC_WINDOW_TILEMAP) != 0,
-		"window_enable":     (lcdc & LCDC_WINDOW_ENABLE) != 0,
-		"tile_data_select":  (lcdc & LCDC_TILE_DATA) != 0,
-		"bg_tilemap":        (lcdc & LCDC_BG_TILEMAP) != 0,
-		"obj_size":          (lcdc & LCDC_OBJ_SIZE) != 0,
-		"obj_enable":        (lcdc & LCDC_OBJ_ENABLE) != 0,
-		"bg_enable":         (lcdc & LCDC_BG_ENABLE) != 0,
+		"display_enable":   (lcdc & LCDC_DISPLAY_ENABLE) != 0,
+		"window_tilemap":   (lcdc & LCDC_WINDOW_TILEMAP) != 0,
+		"window_enable":    (lcdc & LCDC_WINDOW_ENABLE) != 0,
+		"tile_data_select": (lcdc & LCDC_TILE_DATA) != 0,
+		"bg_tilemap":       (lcdc & LCDC_BG_TILEMAP) != 0,
+		"obj_size":         (lcdc & LCDC_OBJ_SIZE) != 0,
+		"obj_enable":       (lcdc & LCDC_OBJ_ENABLE) != 0,
+		"bg_enable":        (lcdc & LCDC_BG_ENABLE) != 0,
 	}
 }
 
@@ -588,7 +588,7 @@ func (ppu *PPU) GetLCDCStatus() map[string]bool {
 func (ppu *PPU) DisplayScreenBuffer() {
 	// Character map for different gray levels
 	chars := []rune{' ', '░', '▒', '█'} // 0=white, 1=light gray, 2=dark gray, 3=black
-	
+
 	for y := 0; y < SCREEN_HEIGHT; y++ {
 		for x := 0; x < SCREEN_WIDTH; x++ {
 			colorIndex := ppu.screenBuffer[y*SCREEN_WIDTH+x] & 0x03
@@ -601,7 +601,7 @@ func (ppu *PPU) DisplayScreenBuffer() {
 // Display a small portion of the screen buffer (for debugging)
 func (ppu *PPU) DisplayScreenBufferSection(startX, startY, width, height int) {
 	chars := []rune{' ', '░', '▒', '█'}
-	
+
 	for y := startY; y < startY+height && y < SCREEN_HEIGHT; y++ {
 		for x := startX; x < startX+width && x < SCREEN_WIDTH; x++ {
 			colorIndex := ppu.screenBuffer[y*SCREEN_WIDTH+x] & 0x03
