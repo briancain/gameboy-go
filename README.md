@@ -1,5 +1,7 @@
 # GameBoy Go
 
+[![CI](https://github.com/briancain/gameboy-go/actions/workflows/ci.yml/badge.svg)](https://github.com/briancain/gameboy-go/actions/workflows/ci.yml)
+
 A GameBoy emulator written in Golang.
 
 This project aims to create a fully functional GameBoy emulator that can run commercial games.
