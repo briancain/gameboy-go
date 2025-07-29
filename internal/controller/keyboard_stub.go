@@ -42,6 +42,42 @@ func (k *Keyboard) GetButtonState() byte {
 	return k.buttonState
 }
 
+// SetButtonState sets the state of a specific button (for external input handling)
+func (k *Keyboard) SetButtonState(button string, pressed bool) {
+	// Store previous state for interrupt detection
+	k.prevButtonState = k.buttonState
+
+	// Map button names to button bits
+	var buttonBit byte
+	switch button {
+	case "up":
+		buttonBit = BUTTON_UP
+	case "down":
+		buttonBit = BUTTON_DOWN
+	case "left":
+		buttonBit = BUTTON_LEFT
+	case "right":
+		buttonBit = BUTTON_RIGHT
+	case "a":
+		buttonBit = BUTTON_A
+	case "b":
+		buttonBit = BUTTON_B
+	case "select":
+		buttonBit = BUTTON_SELECT
+	case "start":
+		buttonBit = BUTTON_START
+	default:
+		return // Unknown button
+	}
+
+	// Set or clear the button bit
+	if pressed {
+		k.buttonState |= buttonBit
+	} else {
+		k.buttonState &= ^buttonBit
+	}
+}
+
 // Process a joypad register write
 func (k *Keyboard) WriteJoypad(value byte) {
 	// Only bits 4-5 are writable

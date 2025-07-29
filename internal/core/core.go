@@ -195,13 +195,7 @@ func (gb *GameBoyCore) Update() error {
 	return nil
 }
 
-// Takes a snapshot of the current state of the system that can be loaded later
-func (gb *GameBoyCore) SaveState() error {
-	// TODO: Implement save state functionality
-	return nil
-}
-
-// Set the exit flag to true to stop the emulator
+// Exit sets the exit flag to stop the emulator
 func (gb *GameBoyCore) Exit() {
 	// Save battery RAM if available
 	if gb.Cartridge != nil && gb.Cartridge.GetMBC() != nil {
@@ -215,6 +209,34 @@ func (gb *GameBoyCore) Exit() {
 	}
 
 	gb.exit = true
+}
+
+// Step executes one frame of emulation (for display integration)
+func (gb *GameBoyCore) Step() error {
+	return gb.runFrame()
+}
+
+// GetScreenBuffer returns the current screen buffer from the PPU
+func (gb *GameBoyCore) GetScreenBuffer() []byte {
+	return gb.Ppu.GetScreenBuffer()
+}
+
+// IsRunning returns whether the emulator is still running
+func (gb *GameBoyCore) IsRunning() bool {
+	return !gb.exit
+}
+
+// SetButtonState sets the state of a GameBoy button (for input handling)
+func (gb *GameBoyCore) SetButtonState(button string, pressed bool) {
+	if gb.Controller != nil {
+		gb.Controller.SetButtonState(button, pressed)
+	}
+}
+
+// Takes a snapshot of the current state of the system that can be loaded later
+func (gb *GameBoyCore) SaveState() error {
+	// TODO: Implement save state functionality
+	return nil
 }
 
 // SetSaveDirectory sets the directory where battery-backed save files will be stored

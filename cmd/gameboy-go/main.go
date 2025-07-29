@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/briancain/gameboy-go/internal/core"
+	"github.com/briancain/gameboy-go/internal/display"
 	"github.com/briancain/gameboy-go/version"
 )
 
@@ -50,24 +51,33 @@ func startEmulator() error {
 		return err
 	}
 
-	// Set up signal handling for graceful shutdown
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	// Check if running in headless mode
+	if Headless {
+		log.Println("Running in headless mode...")
+		// Set up signal handling for graceful shutdown
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// Start the emulator in a goroutine
-	errChan := make(chan error)
-	go func() {
-		errChan <- gb.Run()
-	}()
+		// Start the emulator in a goroutine
+		errChan := make(chan error)
+		go func() {
+			errChan <- gb.Run()
+		}()
 
-	// Wait for either an error or a signal
-	select {
-	case err := <-errChan:
-		return err
-	case sig := <-sigChan:
-		log.Printf("Received signal %v, shutting down...", sig)
-		gb.Exit()
-		return <-errChan
+		// Wait for either an error or a signal
+		select {
+		case err := <-errChan:
+			return err
+		case sig := <-sigChan:
+			log.Printf("Received signal %v, shutting down...", sig)
+			gb.Exit()
+			return <-errChan
+		}
+	} else {
+		// Create and run the ebiten display
+		log.Println("Starting visual display...")
+		ebitenDisplay := display.NewEbitenDisplay(gb, gb, Scale, DebugOutput)
+		return ebitenDisplay.Run()
 	}
 }
 

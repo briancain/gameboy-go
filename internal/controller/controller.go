@@ -40,6 +40,9 @@ type Controller interface {
 	// Get the current button state
 	GetButtonState() byte
 
+	// Set the state of a specific button (for external input handling)
+	SetButtonState(button string, pressed bool)
+
 	// Process a joypad register write
 	WriteJoypad(value byte)
 
