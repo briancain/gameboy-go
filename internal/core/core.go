@@ -216,6 +216,23 @@ func (gb *GameBoyCore) Step() error {
 	return gb.runFrame()
 }
 
+// StepInstruction executes a single CPU instruction (for more granular control)
+func (gb *GameBoyCore) StepInstruction() (int, error) {
+	// Execute one CPU instruction
+	cycles := gb.Cpu.Step()
+
+	// Update PPU
+	gb.Ppu.Step(cycles)
+
+	// Update Sound
+	gb.Sound.Step(cycles)
+
+	// Update Timer
+	gb.Timer.Step(cycles)
+
+	return cycles, nil
+}
+
 // GetScreenBuffer returns the current screen buffer from the PPU
 func (gb *GameBoyCore) GetScreenBuffer() []byte {
 	return gb.Ppu.GetScreenBuffer()

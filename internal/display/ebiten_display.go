@@ -36,6 +36,7 @@ type EbitenDisplay struct {
 // Emulator interface for the display to interact with the core
 type Emulator interface {
 	Step() error
+	StepInstruction() (int, error)
 	GetScreenBuffer() []byte
 	IsRunning() bool
 	Exit()
@@ -66,11 +67,20 @@ func (d *EbitenDisplay) Update() error {
 	// Handle input
 	d.handleInput()
 
-	// Step the emulator
+	// Step the emulator for the right number of cycles per frame
+	// GameBoy runs at ~70,224 cycles per frame at 60 FPS
 	if d.emulator.IsRunning() {
-		if err := d.emulator.Step(); err != nil {
-			log.Printf("Emulator step error: %v", err)
-			return err
+		// Run approximately 1/60th of GameBoy cycles per update
+		cyclesThisUpdate := 0
+		targetCycles := 1170 // 70224 / 60
+
+		for cyclesThisUpdate < targetCycles {
+			cycles, err := d.emulator.StepInstruction()
+			if err != nil {
+				log.Printf("Emulator step error: %v", err)
+				return err
+			}
+			cyclesThisUpdate += cycles
 		}
 	}
 
@@ -178,6 +188,9 @@ func (d *EbitenDisplay) Run() error {
 	ebiten.SetWindowSize(SCREEN_WIDTH*d.scale, SCREEN_HEIGHT*d.scale)
 	ebiten.SetWindowTitle("GameBoy Go Emulator")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+
+	// Set TPS to 60 to match GameBoy frame rate
+	ebiten.SetTPS(60)
 
 	// Run the game
 	return ebiten.RunGame(d)
