@@ -21,10 +21,26 @@ The emulator is under active development with the following components implement
   - ✅ Real-Time Clock (RTC) for MBC3
   - ✅ Rumble support for MBC5
 - ✅ Input handling with joypad interrupts
-
-## In Progress
-
 - 🔄 Picture Processing Unit (PPU)
+  - ✅ Core PPU timing and modes (OAM, VRAM, HBLANK, VBLANK)
+  - ✅ Background rendering with scrolling (SCX, SCY)
+  - ✅ Window rendering with proper edge case handling
+  - ✅ Sprite rendering (8x8 and 8x16 modes)
+  - ✅ PPU register write handlers with real-time updates
+  - ✅ Palette support (BGP, OBP0, OBP1)
+  - ✅ LCDC control (LCD on/off, layer enables)
+  - ✅ STAT register with interrupt flags
+  - ✅ LY/LYC coincidence detection
+
+## Ready to Implement (PPU)
+
+The following PPU features are ready to be implemented with existing infrastructure:
+
+- 📝 **Sprite Priority Handling**: Improve sprite-to-sprite priority when X coordinates are the same (15-20 min)
+- 📝 **Graphics Output Integration**: Connect to a graphics library like ebiten for visual display (30-45 min)
+- 📝 **Color Palette Customization**: Add support for custom color palettes beyond monochrome (15-20 min)
+- 📝 **PPU Interrupt Generation**: Generate STAT and VBLANK interrupts properly (20-30 min)
+- 📝 **Advanced Rendering Features**: Sprite-to-background priority, transparent colors (30-45 min)
 
 ## Planned Features
 
