@@ -15,7 +15,12 @@ The emulator is under active development with the following components implement
 - ✅ Basic memory management (MMU)
 - ✅ Cartridge loading
 - ✅ Timer system
-- ⚠️ Partial interrupt handling
+- ✅ Interrupt handling
+  - ✅ V-Blank interrupts with proper timing
+  - ✅ STAT interrupts (mode transitions and LYC coincidence)
+  - ✅ Timer overflow interrupts
+  - ✅ Joypad interrupts
+  - ✅ Serial transfer interrupts
 - ✅ Memory Bank Controllers (MBC1, MBC2, MBC3, MBC5)
   - ✅ Battery-backed save support
   - ✅ Real-Time Clock (RTC) for MBC3
@@ -38,11 +43,9 @@ The emulator is under active development with the following components implement
 
 The following PPU features are ready to be implemented with existing infrastructure:
 
-- 📝 **Sprite Priority Handling**: Improve sprite-to-sprite priority when X coordinates are the same (15-20 min)
-- 📝 **Graphics Output Integration**: Connect to a graphics library like ebiten for visual display (30-45 min)
-- 📝 **Color Palette Customization**: Add support for custom color palettes beyond monochrome (15-20 min)
-- 📝 **PPU Interrupt Generation**: Generate STAT and VBLANK interrupts properly (20-30 min)
-- 📝 **Advanced Rendering Features**: Sprite-to-background priority, transparent colors (30-45 min)
+- 📝 **Graphics Output Integration**: Connect to a graphics library like ebiten for visual display
+- 📝 **Color Palette Customization**: Add support for custom color palettes beyond monochrome
+- 📝 **Advanced Rendering Features**: Sprite-to-background priority, transparent colors
 
 ## Planned Features
 
