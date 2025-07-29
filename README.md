@@ -11,33 +11,18 @@ It's heavily based off the GameBoy CPU manual found online for the Z80.
 
 The emulator is under active development with the following components implemented:
 
-- ✅ CPU emulation (Z80-like) with all instructions and proper timing
-- ✅ Basic memory management (MMU)
-- ✅ Cartridge loading
-- ✅ Timer system
-- ✅ Interrupt handling
-  - ✅ V-Blank interrupts with proper timing
-  - ✅ STAT interrupts (mode transitions and LYC coincidence)
-  - ✅ Timer overflow interrupts
-  - ✅ Joypad interrupts
-  - ✅ Serial transfer interrupts
-- ✅ Memory Bank Controllers (MBC1, MBC2, MBC3, MBC5)
-  - ✅ Battery-backed save support
-  - ✅ Real-Time Clock (RTC) for MBC3
-  - ✅ Rumble support for MBC5
-- ✅ Input handling with joypad interrupts
-- ✅ Picture Processing Unit (PPU)
-  - ✅ Core PPU timing and modes (OAM, VRAM, HBLANK, VBLANK)
-  - ✅ Background rendering with scrolling (SCX, SCY)
-  - ✅ Window rendering with proper edge case handling
-  - ✅ Sprite rendering (8x8 and 8x16 modes)
-  - ✅ PPU register write handlers with real-time updates
-  - ✅ Palette support (BGP, OBP0, OBP1)
-  - ✅ LCDC control (LCD on/off, layer enables)
-  - ✅ STAT register with interrupt flags
-  - ✅ LY/LYC coincidence detection
-  - ✅ Proper STAT and V-Blank interrupt generation
-  - ✅ Hardware-accurate sprite priority handling
+- ✅ **CPU emulation** - Z80-like with all instructions and proper timing
+- ✅ **Memory management** - MMU with proper memory mapping
+- ✅ **Cartridge support** - MBC1-5 with battery saves, RTC, and rumble
+- ✅ **Timer system** - Complete with proper interrupt handling
+- ✅ **Interrupt handling** - V-Blank, STAT, timer, joypad, and serial interrupts
+- ✅ **Input handling** - Joypad with interrupt support
+- ✅ **Picture Processing Unit (PPU)** - Complete graphics rendering with:
+  - Core PPU timing and modes
+  - Background and window rendering with scrolling
+  - Sprite rendering (8x8 and 8x16) with hardware-accurate priority
+  - Proper STAT and V-Blank interrupt generation
+- ✅ **Visual output** - Real-time display with Ebiten graphics engine
 
 ## Ready to Implement (PPU)
 
