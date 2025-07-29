@@ -203,6 +203,19 @@ func (m *MockMMU) WriteByte(addr uint16, value byte) {
 	m.memory[addr] = value
 }
 
+// WriteIODirect writes directly to I/O registers without triggering callbacks
+func (m *MockMMU) WriteIODirect(addr uint16, value byte) {
+	// Handle special registers
+	if addr >= 0xFF00 && addr <= 0xFF7F {
+		if m.registers == nil {
+			m.registers = make(map[uint16]byte)
+		}
+		m.registers[addr] = value
+		return
+	}
+	m.memory[addr] = value
+}
+
 func TestPPUScreenBufferRGB(t *testing.T) {
 	mmu := &MockMMU{}
 	ppu := NewPPU(mmu)
@@ -396,4 +409,134 @@ func TestWindowTileBoundsChecking(t *testing.T) {
 			t.Errorf("Expected pixel %d to be 0 when window out of bounds, got %d", i, ppu.screenBuffer[i])
 		}
 	}
+}
+
+func TestPPURegisterWriteHandling(t *testing.T) {
+	mmu := &MockMMU{}
+	ppu := NewPPU(mmu)
+
+	// Test LCDC write handling
+	t.Run("LCDC Write", func(t *testing.T) {
+		// Set initial LCDC value
+		mmu.WriteByte(0xFF40, 0x80) // LCD enabled
+
+		// Turn off LCD
+		ppu.WriteRegister(0xFF40, 0x00)
+
+		// PPU should reset to HBLANK mode and line 0
+		if ppu.GetCurrentMode() != MODE_HBLANK {
+			t.Errorf("Expected mode %d after LCD off, got %d", MODE_HBLANK, ppu.GetCurrentMode())
+		}
+		if ppu.GetCurrentLine() != 0 {
+			t.Errorf("Expected line 0 after LCD off, got %d", ppu.GetCurrentLine())
+		}
+
+		// Turn LCD back on
+		ppu.WriteRegister(0xFF40, 0x80)
+
+		// PPU should reset to OAM mode and line 0
+		if ppu.GetCurrentMode() != MODE_OAM {
+			t.Errorf("Expected mode %d after LCD on, got %d", MODE_OAM, ppu.GetCurrentMode())
+		}
+	})
+
+	// Test STAT write handling
+	t.Run("STAT Write", func(t *testing.T) {
+		// Set initial STAT value with mode bits
+		mmu.WriteByte(0xFF41, 0x05) // Mode 1, LYC=LY set
+
+		// Try to write to STAT (should preserve read-only bits)
+		ppu.WriteRegister(0xFF41, 0xFF) // Try to set all bits
+
+		// Read back the value
+		stat := mmu.ReadByte(0xFF41)
+
+		// Bits 0-2 should be preserved (read-only)
+		if (stat & 0x07) != 0x05 {
+			t.Errorf("Expected read-only bits to be preserved, got 0x%02X", stat&0x07)
+		}
+
+		// Bits 3-6 should be writable
+		if (stat & 0x78) != 0x78 {
+			t.Errorf("Expected writable bits to be set, got 0x%02X", stat&0x78)
+		}
+	})
+
+	// Test LY write handling
+	t.Run("LY Write", func(t *testing.T) {
+		// Set PPU to a non-zero line
+		ppu.line = 50
+		mmu.WriteByte(0xFF44, 50)
+
+		// Write to LY (should reset to 0)
+		ppu.WriteRegister(0xFF44, 0xFF) // Value doesn't matter
+
+		// LY should be reset to 0
+		if ppu.GetCurrentLine() != 0 {
+			t.Errorf("Expected line 0 after LY write, got %d", ppu.GetCurrentLine())
+		}
+		if mmu.ReadByte(0xFF44) != 0 {
+			t.Errorf("Expected LY register to be 0, got %d", mmu.ReadByte(0xFF44))
+		}
+	})
+
+	// Test scroll register writes (should not crash)
+	t.Run("Scroll Register Writes", func(t *testing.T) {
+		// Simulate MMU behavior: store value first, then call PPU
+		mmu.WriteByte(0xFF42, 0x12) // SCY
+		ppu.WriteRegister(0xFF42, 0x12)
+
+		mmu.WriteByte(0xFF43, 0x34) // SCX
+		ppu.WriteRegister(0xFF43, 0x34)
+
+		// Values should be stored in MMU
+		if mmu.ReadByte(0xFF42) != 0x12 {
+			t.Errorf("Expected SCY to be 0x12, got 0x%02X", mmu.ReadByte(0xFF42))
+		}
+		if mmu.ReadByte(0xFF43) != 0x34 {
+			t.Errorf("Expected SCX to be 0x34, got 0x%02X", mmu.ReadByte(0xFF43))
+		}
+	})
+
+	// Test window position register writes (should not crash)
+	t.Run("Window Position Register Writes", func(t *testing.T) {
+		// Simulate MMU behavior: store value first, then call PPU
+		mmu.WriteByte(0xFF4A, 0x56) // WY
+		ppu.WriteRegister(0xFF4A, 0x56)
+
+		mmu.WriteByte(0xFF4B, 0x78) // WX
+		ppu.WriteRegister(0xFF4B, 0x78)
+
+		// Values should be stored in MMU
+		if mmu.ReadByte(0xFF4A) != 0x56 {
+			t.Errorf("Expected WY to be 0x56, got 0x%02X", mmu.ReadByte(0xFF4A))
+		}
+		if mmu.ReadByte(0xFF4B) != 0x78 {
+			t.Errorf("Expected WX to be 0x78, got 0x%02X", mmu.ReadByte(0xFF4B))
+		}
+	})
+
+	// Test palette register writes (should not crash)
+	t.Run("Palette Register Writes", func(t *testing.T) {
+		// Simulate MMU behavior: store value first, then call PPU
+		mmu.WriteByte(0xFF47, 0xE4) // BGP
+		ppu.WriteRegister(0xFF47, 0xE4)
+
+		mmu.WriteByte(0xFF48, 0xD2) // OBP0
+		ppu.WriteRegister(0xFF48, 0xD2)
+
+		mmu.WriteByte(0xFF49, 0xA1) // OBP1
+		ppu.WriteRegister(0xFF49, 0xA1)
+
+		// Values should be stored in MMU
+		if mmu.ReadByte(0xFF47) != 0xE4 {
+			t.Errorf("Expected BGP to be 0xE4, got 0x%02X", mmu.ReadByte(0xFF47))
+		}
+		if mmu.ReadByte(0xFF48) != 0xD2 {
+			t.Errorf("Expected OBP0 to be 0xD2, got 0x%02X", mmu.ReadByte(0xFF48))
+		}
+		if mmu.ReadByte(0xFF49) != 0xA1 {
+			t.Errorf("Expected OBP1 to be 0xA1, got 0x%02X", mmu.ReadByte(0xFF49))
+		}
+	})
 }

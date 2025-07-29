@@ -83,6 +83,9 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	// Initialize PPU with reference to MMU
 	gb.Ppu = ppu.NewPPU(gb.Mmu)
 
+	// Set the PPU in the MMU for register write handling
+	gb.Mmu.SetPPU(gb.Ppu)
+
 	// Initialize Timer with reference to MMU
 	gb.Timer = timer.NewTimer(gb.Mmu)
 

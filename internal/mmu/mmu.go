@@ -37,6 +37,7 @@ type MemoryManagedUnit struct {
 	cartridge  Cartridge
 	timer      Timer
 	controller Controller
+	ppu        PPU
 }
 
 // Cartridge interface for memory banking
@@ -55,6 +56,11 @@ type Timer interface {
 type Controller interface {
 	ReadJoypad() byte
 	WriteJoypad(value byte)
+}
+
+// PPU interface for handling PPU register writes
+type PPU interface {
+	WriteRegister(addr uint16, value byte)
 }
 
 // Initialize a new MMU
@@ -137,6 +143,11 @@ func (m *MemoryManagedUnit) SetTimer(timer Timer) {
 // Set the controller
 func (m *MemoryManagedUnit) SetController(controller Controller) {
 	m.controller = controller
+}
+
+// Set the PPU
+func (m *MemoryManagedUnit) SetPPU(ppu PPU) {
+	m.ppu = ppu
 }
 
 // Load BIOS
@@ -285,9 +296,41 @@ func (m *MemoryManagedUnit) writeIO(addr uint16, value byte) {
 		} else {
 			m.io[addr-0xFF00] = value
 		}
+	case 0xFF40, // LCDC - LCD Control
+		0xFF41, // STAT - LCD Status
+		0xFF42, // SCY - Scroll Y
+		0xFF43, // SCX - Scroll X
+		0xFF44, // LY - LCD Y-Coordinate (read-only, but handle writes)
+		0xFF45, // LYC - LY Compare
+		0xFF47, // BGP - Background Palette
+		0xFF48, // OBP0 - Object Palette 0
+		0xFF49, // OBP1 - Object Palette 1
+		0xFF4A, // WY - Window Y Position
+		0xFF4B: // WX - Window X Position
+		// For most registers, store the value first
+		if addr != 0xFF41 && addr != 0xFF44 {
+			// Normal registers: store value then handle side effects
+			m.io[addr-0xFF00] = value
+		} else if addr == 0xFF44 {
+			// LY register: always store 0 regardless of written value
+			m.io[addr-0xFF00] = 0
+		}
+		// Handle special register behavior
+		if m.ppu != nil {
+			m.ppu.WriteRegister(addr, value)
+		}
+		// STAT register is handled specially by the PPU via WriteIODirect
 	case 0xFF46: // DMA - OAM DMA transfer
 		m.doDMATransfer(value)
 	default:
+		m.io[addr-0xFF00] = value
+	}
+}
+
+// WriteIODirect writes directly to I/O registers without triggering callbacks
+// This is used internally to avoid recursion when components need to update registers
+func (m *MemoryManagedUnit) WriteIODirect(addr uint16, value byte) {
+	if addr >= 0xFF00 && addr < 0xFF80 {
 		m.io[addr-0xFF00] = value
 	}
 }
