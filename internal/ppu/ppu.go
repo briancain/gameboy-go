@@ -257,7 +257,7 @@ func (ppu *PPU) renderBackground() {
 
 	// Calculate which row of tiles to use
 	y := scrollY + ppu.line
-	tileRow := uint16(y / 8)
+	tileRow := uint16(y/8) % 32 // Wrap around at 32 tiles
 
 	// Calculate which pixel row of the tile to use
 	pixelY := y % 8
@@ -266,7 +266,7 @@ func (ppu *PPU) renderBackground() {
 	for x := byte(0); x < SCREEN_WIDTH; x++ {
 		// Calculate which tile column to use
 		pixelX := scrollX + x
-		tileCol := uint16(pixelX / 8)
+		tileCol := uint16(pixelX/8) % 32 // Wrap around at 32 tiles
 
 		// Get the tile index
 		tileMapOffset := tileRow*32 + tileCol
@@ -486,4 +486,97 @@ func (ppu *PPU) renderSprites() {
 // Get the screen buffer
 func (ppu *PPU) GetScreenBuffer() []byte {
 	return ppu.screenBuffer[:]
+}
+
+// Get the screen buffer with RGB values for display
+func (ppu *PPU) GetScreenBufferRGB() []byte {
+	// Convert 2-bit color values to RGB (grayscale)
+	// 0 = White, 1 = Light Gray, 2 = Dark Gray, 3 = Black
+	colorMap := [4][3]byte{
+		{255, 255, 255}, // White
+		{170, 170, 170}, // Light Gray
+		{85, 85, 85},    // Dark Gray
+		{0, 0, 0},       // Black
+	}
+
+	rgbBuffer := make([]byte, SCREEN_WIDTH*SCREEN_HEIGHT*3)
+	
+	for i, colorIndex := range ppu.screenBuffer {
+		rgb := colorMap[colorIndex&0x03] // Ensure we only use 2 bits
+		rgbBuffer[i*3] = rgb[0]     // R
+		rgbBuffer[i*3+1] = rgb[1]   // G
+		rgbBuffer[i*3+2] = rgb[2]   // B
+	}
+	
+	return rgbBuffer
+}
+
+// Get screen dimensions
+func (ppu *PPU) GetScreenWidth() int {
+	return SCREEN_WIDTH
+}
+
+func (ppu *PPU) GetScreenHeight() int {
+	return SCREEN_HEIGHT
+}
+
+// Debug functions for PPU state inspection
+func (ppu *PPU) GetCurrentMode() byte {
+	return ppu.mode
+}
+
+func (ppu *PPU) GetCurrentLine() byte {
+	return ppu.line
+}
+
+func (ppu *PPU) GetModeClock() int {
+	return ppu.modeClock
+}
+
+// Check if LCD is enabled
+func (ppu *PPU) IsLCDEnabled() bool {
+	lcdc := ppu.mmu.ReadByte(0xFF40)
+	return (lcdc & LCDC_DISPLAY_ENABLE) != 0
+}
+
+// Get LCDC register value with bit meanings
+func (ppu *PPU) GetLCDCStatus() map[string]bool {
+	lcdc := ppu.mmu.ReadByte(0xFF40)
+	return map[string]bool{
+		"display_enable":    (lcdc & LCDC_DISPLAY_ENABLE) != 0,
+		"window_tilemap":    (lcdc & LCDC_WINDOW_TILEMAP) != 0,
+		"window_enable":     (lcdc & LCDC_WINDOW_ENABLE) != 0,
+		"tile_data_select":  (lcdc & LCDC_TILE_DATA) != 0,
+		"bg_tilemap":        (lcdc & LCDC_BG_TILEMAP) != 0,
+		"obj_size":          (lcdc & LCDC_OBJ_SIZE) != 0,
+		"obj_enable":        (lcdc & LCDC_OBJ_ENABLE) != 0,
+		"bg_enable":         (lcdc & LCDC_BG_ENABLE) != 0,
+	}
+}
+
+// Display the screen buffer in terminal (for debugging)
+func (ppu *PPU) DisplayScreenBuffer() {
+	// Character map for different gray levels
+	chars := []rune{' ', '░', '▒', '█'} // 0=white, 1=light gray, 2=dark gray, 3=black
+	
+	for y := 0; y < SCREEN_HEIGHT; y++ {
+		for x := 0; x < SCREEN_WIDTH; x++ {
+			colorIndex := ppu.screenBuffer[y*SCREEN_WIDTH+x] & 0x03
+			print(string(chars[colorIndex]))
+		}
+		println()
+	}
+}
+
+// Display a small portion of the screen buffer (for debugging)
+func (ppu *PPU) DisplayScreenBufferSection(startX, startY, width, height int) {
+	chars := []rune{' ', '░', '▒', '█'}
+	
+	for y := startY; y < startY+height && y < SCREEN_HEIGHT; y++ {
+		for x := startX; x < startX+width && x < SCREEN_WIDTH; x++ {
+			colorIndex := ppu.screenBuffer[y*SCREEN_WIDTH+x] & 0x03
+			print(string(chars[colorIndex]))
+		}
+		println()
+	}
 }

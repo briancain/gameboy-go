@@ -202,3 +202,82 @@ func (m *MockMMU) WriteByte(addr uint16, value byte) {
 	}
 	m.memory[addr] = value
 }
+
+func TestPPUScreenBufferRGB(t *testing.T) {
+	mmu := &MockMMU{}
+	ppu := NewPPU(mmu)
+
+	// Set some test pixels
+	ppu.screenBuffer[0] = 0 // White
+	ppu.screenBuffer[1] = 1 // Light gray
+	ppu.screenBuffer[2] = 2 // Dark gray
+	ppu.screenBuffer[3] = 3 // Black
+
+	rgbBuffer := ppu.GetScreenBufferRGB()
+
+	// Check RGB values
+	if rgbBuffer[0] != 255 || rgbBuffer[1] != 255 || rgbBuffer[2] != 255 {
+		t.Errorf("Expected white (255,255,255), got (%d,%d,%d)", rgbBuffer[0], rgbBuffer[1], rgbBuffer[2])
+	}
+
+	if rgbBuffer[3] != 170 || rgbBuffer[4] != 170 || rgbBuffer[5] != 170 {
+		t.Errorf("Expected light gray (170,170,170), got (%d,%d,%d)", rgbBuffer[3], rgbBuffer[4], rgbBuffer[5])
+	}
+
+	if rgbBuffer[6] != 85 || rgbBuffer[7] != 85 || rgbBuffer[8] != 85 {
+		t.Errorf("Expected dark gray (85,85,85), got (%d,%d,%d)", rgbBuffer[6], rgbBuffer[7], rgbBuffer[8])
+	}
+
+	if rgbBuffer[9] != 0 || rgbBuffer[10] != 0 || rgbBuffer[11] != 0 {
+		t.Errorf("Expected black (0,0,0), got (%d,%d,%d)", rgbBuffer[9], rgbBuffer[10], rgbBuffer[11])
+	}
+}
+
+func TestPPUDebugFunctions(t *testing.T) {
+	mmu := &MockMMU{}
+	ppu := NewPPU(mmu)
+
+	// Test dimension getters
+	if ppu.GetScreenWidth() != SCREEN_WIDTH {
+		t.Errorf("Expected width %d, got %d", SCREEN_WIDTH, ppu.GetScreenWidth())
+	}
+
+	if ppu.GetScreenHeight() != SCREEN_HEIGHT {
+		t.Errorf("Expected height %d, got %d", SCREEN_HEIGHT, ppu.GetScreenHeight())
+	}
+
+	// Test state getters
+	if ppu.GetCurrentMode() != MODE_OAM {
+		t.Errorf("Expected initial mode %d, got %d", MODE_OAM, ppu.GetCurrentMode())
+	}
+
+	if ppu.GetCurrentLine() != 0 {
+		t.Errorf("Expected initial line 0, got %d", ppu.GetCurrentLine())
+	}
+
+	if ppu.GetModeClock() != 0 {
+		t.Errorf("Expected initial mode clock 0, got %d", ppu.GetModeClock())
+	}
+}
+
+func TestPPULCDCStatus(t *testing.T) {
+	mmu := &MockMMU{}
+	ppu := NewPPU(mmu)
+
+	// Set LCDC register to a known value using WriteByte to ensure it's stored correctly
+	mmu.WriteByte(0xFF40, 0x91) // Default GameBoy value
+
+	status := ppu.GetLCDCStatus()
+
+	if !status["display_enable"] {
+		t.Error("Expected display_enable to be true")
+	}
+
+	if !status["bg_enable"] {
+		t.Error("Expected bg_enable to be true")
+	}
+
+	if status["obj_enable"] {
+		t.Error("Expected obj_enable to be false")
+	}
+}
