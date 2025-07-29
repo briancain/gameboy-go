@@ -14,6 +14,10 @@ func (m *MockEmulator) Step() error {
 	return nil
 }
 
+func (m *MockEmulator) StepInstruction() (int, error) {
+	return 4, nil // Return a typical instruction cycle count
+}
+
 func (m *MockEmulator) GetScreenBuffer() []byte {
 	if m.screenBuffer == nil {
 		// Create a simple test pattern
