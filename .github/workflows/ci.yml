@@ -31,7 +31,8 @@ jobs:
           libxxf86vm-dev \
           libgl1-mesa-dev \
           libasound2-dev \
-          pkg-config
+          pkg-config \
+          xvfb
 
     - name: Verify dependencies
       run: |
@@ -47,7 +48,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: xvfb-run -a go test -v ./...
 
     - name: Format check
       run: |
