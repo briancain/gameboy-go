@@ -70,16 +70,16 @@ To properly test the emulator, you'll need to download test ROMs. These are not 
 
 ```bash
 # From the project root directory
-mkdir -p test/data
-cd test/data
+mkdir -p test/testdata
+cd test/testdata
 git clone https://github.com/retrio/gb-test-roms.git
 cd ../..
 
 # Test your emulator with Blargg's CPU instruction test
-./bin/gameboy-go -rom-file test/data/gb-test-roms/cpu_instrs/cpu_instrs.gb -debug
+./bin/gameboy-go -rom-file test/testdata/gb-test-roms/cpu_instrs/cpu_instrs.gb -debug
 
 # Test PPU rendering with the acid2 visual test
-./bin/gameboy-go -rom-file test/data/gb-test-roms/acid2.gb -scale 3
+./bin/gameboy-go -rom-file test/testdata/gb-test-roms/acid2.gb -scale 3
 ```
 
 **Recommended Test ROMs:**
@@ -115,11 +115,13 @@ These test ROMs are homebrew software specifically designed for emulator testing
   - `controller/`: Input handling
   - `core/`: Core emulator functionality
   - `cpu/`: CPU implementation
+  - `display/`: Visual output and graphics integration
   - `mmu/`: Memory management unit
   - `ppu/`: Picture processing unit (graphics)
   - `snapshot/`: Save state functionality
   - `sound/`: Sound system
   - `timer/`: Timer implementation
+- `test/testdata/`: Test ROMs and external test data
 - `docs/`: Documentation
 
 ## Development
