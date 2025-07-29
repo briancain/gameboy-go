@@ -442,6 +442,15 @@ func (ppu *PPU) renderWindow() {
 	}
 }
 
+// Sprite data structure for priority handling
+type SpriteData struct {
+	oamIndex   byte
+	x          byte
+	y          byte
+	tileIndex  byte
+	attributes byte
+}
+
 // Render sprites for the current scanline
 func (ppu *PPU) renderSprites() {
 	lcdc := ppu.mmu.ReadByte(0xFF40)
@@ -456,8 +465,8 @@ func (ppu *PPU) renderSprites() {
 	obp0 := ppu.mmu.ReadByte(0xFF48)
 	obp1 := ppu.mmu.ReadByte(0xFF49)
 
-	// Maximum of 10 sprites per scanline
-	spritesOnLine := 0
+	// Collect all sprites on this scanline
+	var spritesOnLine []SpriteData
 
 	// Check all 40 sprites
 	for sprite := byte(0); sprite < 40; sprite++ {
@@ -478,70 +487,119 @@ func (ppu *PPU) renderSprites() {
 			continue
 		}
 
+		// Add sprite to the list
+		spritesOnLine = append(spritesOnLine, SpriteData{
+			oamIndex:   sprite,
+			x:          spriteX,
+			y:          spriteY,
+			tileIndex:  tileIndex,
+			attributes: attributes,
+		})
+
 		// Limit to 10 sprites per scanline
-		spritesOnLine++
-		if spritesOnLine > 10 {
+		if len(spritesOnLine) >= 10 {
 			break
 		}
+	}
 
-		// Get attributes
-		yFlip := (attributes & 0x40) != 0
-		xFlip := (attributes & 0x20) != 0
-		priority := (attributes & 0x80) != 0
-		palette := obp0
-		if (attributes & 0x10) != 0 {
-			palette = obp1
+	// Sort sprites by priority:
+	// 1. Lower X coordinate has higher priority (appears on top)
+	// 2. If X coordinates are equal, lower OAM index has higher priority
+	ppu.sortSpritesByPriority(spritesOnLine)
+
+	// Render sprites in reverse order (lowest priority first)
+	// This ensures higher priority sprites overwrite lower priority ones
+	for i := len(spritesOnLine) - 1; i >= 0; i-- {
+		sprite := spritesOnLine[i]
+		ppu.renderSprite(sprite, spriteHeight, obp0, obp1)
+	}
+}
+
+// Sort sprites by priority according to GameBoy rules
+func (ppu *PPU) sortSpritesByPriority(sprites []SpriteData) {
+	// Simple bubble sort - efficient for small arrays (max 10 sprites)
+	n := len(sprites)
+	for i := 0; i < n-1; i++ {
+		for j := 0; j < n-i-1; j++ {
+			// Compare sprites[j] and sprites[j+1]
+			// Higher priority sprite should come first
+			if ppu.shouldSwapSprites(sprites[j], sprites[j+1]) {
+				sprites[j], sprites[j+1] = sprites[j+1], sprites[j]
+			}
+		}
+	}
+}
+
+// Determine if two sprites should be swapped based on priority
+func (ppu *PPU) shouldSwapSprites(a, b SpriteData) bool {
+	// If X coordinates are different, lower X has higher priority
+	if a.x != b.x {
+		return a.x > b.x // Swap if a.x > b.x (b has higher priority)
+	}
+
+	// If X coordinates are the same, lower OAM index has higher priority
+	return a.oamIndex > b.oamIndex // Swap if a.oamIndex > b.oamIndex (b has higher priority)
+}
+
+// Render a single sprite
+func (ppu *PPU) renderSprite(sprite SpriteData, spriteHeight byte, obp0, obp1 byte) {
+	// Get attributes
+	yFlip := (sprite.attributes & 0x40) != 0
+	xFlip := (sprite.attributes & 0x20) != 0
+	priority := (sprite.attributes & 0x80) != 0
+	palette := obp0
+	if (sprite.attributes & 0x10) != 0 {
+		palette = obp1
+	}
+
+	// Calculate which row of the sprite to use
+	pixelY := ppu.line - sprite.y
+	if yFlip {
+		pixelY = spriteHeight - 1 - pixelY
+	}
+
+	// Get the tile data
+	tileAddr := 0x8000 + uint16(sprite.tileIndex)*16 + uint16(pixelY)*2
+	tileLow := ppu.mmu.ReadByte(tileAddr)
+	tileHigh := ppu.mmu.ReadByte(tileAddr + 1)
+
+	// Draw the sprite row
+	for x := byte(0); x < 8; x++ {
+		// Skip if sprite is off-screen
+		if sprite.x+x >= SCREEN_WIDTH {
+			continue
 		}
 
-		// Calculate which row of the sprite to use
-		pixelY := ppu.line - spriteY
-		if yFlip {
-			pixelY = spriteHeight - 1 - pixelY
+		// Get the color bit
+		colorBit := byte(7 - x)
+		if xFlip {
+			colorBit = x
 		}
 
-		// Get the tile data
-		tileAddr := 0x8000 + uint16(tileIndex)*16 + uint16(pixelY)*2
-		tileLow := ppu.mmu.ReadByte(tileAddr)
-		tileHigh := ppu.mmu.ReadByte(tileAddr + 1)
+		// Get the color value (0-3)
+		colorValue := ((tileHigh>>colorBit)&1)<<1 | ((tileLow >> colorBit) & 1)
 
-		// Draw the sprite row
-		for x := byte(0); x < 8; x++ {
-			// Skip if sprite is off-screen
-			if spriteX+x >= SCREEN_WIDTH {
+		// Color 0 is transparent for sprites
+		if colorValue == 0 {
+			continue
+		}
+
+		// Check sprite priority
+		if priority {
+			// If priority bit is set, sprite is behind background color 1-3
+			bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(sprite.x+x)
+			bgColor := ppu.screenBuffer[bufferIndex]
+			if bgColor != 0 {
 				continue
 			}
-
-			// Get the color bit
-			colorBit := byte(7 - x)
-			if xFlip {
-				colorBit = x
-			}
-
-			// Get the color value (0-3)
-			colorValue := ((tileHigh>>colorBit)&1)<<1 | ((tileLow >> colorBit) & 1)
-
-			// Color 0 is transparent for sprites
-			if colorValue == 0 {
-				continue
-			}
-
-			// Check sprite priority
-			if priority {
-				// If priority bit is set, sprite is behind background color 1-3
-				bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(spriteX+x)
-				bgColor := ppu.screenBuffer[bufferIndex]
-				if bgColor != 0 {
-					continue
-				}
-			}
-
-			// Map the color value through the palette
-			colorIndex := (palette >> (colorValue * 2)) & 0x03
-
-			// Set the pixel in the screen buffer
-			bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(spriteX+x)
-			ppu.screenBuffer[bufferIndex] = colorIndex
 		}
+
+		// Map the color value through the palette
+		colorIndex := (palette >> (colorValue * 2)) & 0x03
+
+		// Set the pixel in the screen buffer
+		bufferIndex := uint16(ppu.line)*SCREEN_WIDTH + uint16(sprite.x+x)
+		ppu.screenBuffer[bufferIndex] = colorIndex
 	}
 }
 

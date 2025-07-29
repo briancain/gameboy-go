@@ -21,7 +21,7 @@ The emulator is under active development with the following components implement
   - ✅ Real-Time Clock (RTC) for MBC3
   - ✅ Rumble support for MBC5
 - ✅ Input handling with joypad interrupts
-- 🔄 Picture Processing Unit (PPU)
+- ✅ Picture Processing Unit (PPU)
   - ✅ Core PPU timing and modes (OAM, VRAM, HBLANK, VBLANK)
   - ✅ Background rendering with scrolling (SCX, SCY)
   - ✅ Window rendering with proper edge case handling
@@ -31,6 +31,8 @@ The emulator is under active development with the following components implement
   - ✅ LCDC control (LCD on/off, layer enables)
   - ✅ STAT register with interrupt flags
   - ✅ LY/LYC coincidence detection
+  - ✅ Proper STAT and V-Blank interrupt generation
+  - ✅ Hardware-accurate sprite priority handling
 
 ## Ready to Implement (PPU)
 
