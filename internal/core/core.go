@@ -102,6 +102,9 @@ func (gb *GameBoyCore) Init(cartPath string) error {
 	// Set the controller in the MMU
 	gb.Mmu.SetController(gb.Controller)
 
+	// Initialize to post-boot state (simulate boot ROM completion)
+	gb.Initialize()
+
 	return nil
 }
 
@@ -231,6 +234,42 @@ func (gb *GameBoyCore) StepInstruction() (int, error) {
 	gb.Timer.Step(cycles)
 
 	return cycles, nil
+}
+
+// Initialize sets up the GameBoy to the post-boot state
+func (gb *GameBoyCore) Initialize() {
+	// Most importantly, enable the LCD (what boot ROM would do)
+	gb.Mmu.WriteByte(0xFF40, 0x91) // LCDC - LCD enabled, BG enabled
+	gb.Mmu.WriteByte(0xFF42, 0x00) // SCY - Scroll Y
+	gb.Mmu.WriteByte(0xFF43, 0x00) // SCX - Scroll X
+	gb.Mmu.WriteByte(0xFF45, 0x00) // LYC - LY Compare
+	gb.Mmu.WriteByte(0xFF47, 0xFC) // BGP - BG Palette
+	gb.Mmu.WriteByte(0xFF48, 0xFF) // OBP0 - Object Palette 0
+	gb.Mmu.WriteByte(0xFF49, 0xFF) // OBP1 - Object Palette 1
+	gb.Mmu.WriteByte(0xFF4A, 0x00) // WY - Window Y
+	gb.Mmu.WriteByte(0xFF4B, 0x00) // WX - Window X
+
+	// Initialize sound registers
+	gb.Mmu.WriteByte(0xFF26, 0xF1) // NR52 - Sound on/off
+
+	// Initialize timer
+	gb.Mmu.WriteByte(0xFF07, 0x00) // TAC - Timer control
+}
+func (gb *GameBoyCore) GetPPUDebugInfo() map[string]interface{} {
+	lcdc := gb.Mmu.ReadByte(0xFF40) // LCDC register
+	stat := gb.Mmu.ReadByte(0xFF41) // STAT register
+	ly := gb.Mmu.ReadByte(0xFF44)   // LY register
+
+	return map[string]interface{}{
+		"lcdc_enabled":    (lcdc & 0x80) != 0,
+		"bg_enabled":      (lcdc & 0x01) != 0,
+		"sprites_enabled": (lcdc & 0x02) != 0,
+		"window_enabled":  (lcdc & 0x20) != 0,
+		"lcdc_value":      lcdc,
+		"stat_value":      stat,
+		"ly_value":        ly,
+		"ppu_mode":        stat & 0x03,
+	}
 }
 
 // GetScreenBuffer returns the current screen buffer from the PPU

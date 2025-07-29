@@ -31,6 +31,9 @@ type EbitenDisplay struct {
 
 	// Debug mode
 	debug bool
+
+	// Debug counters
+	stepCount int
 }
 
 // Emulator interface for the display to interact with the core
@@ -38,6 +41,7 @@ type Emulator interface {
 	Step() error
 	StepInstruction() (int, error)
 	GetScreenBuffer() []byte
+	GetPPUDebugInfo() map[string]interface{}
 	IsRunning() bool
 	Exit()
 }
@@ -81,6 +85,7 @@ func (d *EbitenDisplay) Update() error {
 				return err
 			}
 			cyclesThisUpdate += cycles
+			d.stepCount++ // Count total steps for debugging
 		}
 	}
 
@@ -179,7 +184,36 @@ func (d *EbitenDisplay) handleInput() {
 func (d *EbitenDisplay) drawDebugInfo(screen *ebiten.Image) {
 	// Draw FPS
 	fps := ebiten.ActualFPS()
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("FPS: %.2f", fps))
+	debugText := fmt.Sprintf("FPS: %.2f", fps)
+	debugText += fmt.Sprintf("\nSteps: %d", d.stepCount)
+
+	// Add PPU debug info
+	ppuInfo := d.emulator.GetPPUDebugInfo()
+	debugText += fmt.Sprintf("\nLCD Enabled: %v", ppuInfo["lcdc_enabled"])
+	debugText += fmt.Sprintf("\nBG Enabled: %v", ppuInfo["bg_enabled"])
+	debugText += fmt.Sprintf("\nLCDC: 0x%02X", ppuInfo["lcdc_value"])
+	debugText += fmt.Sprintf("\nLY: %v", ppuInfo["ly_value"])
+	debugText += fmt.Sprintf("\nPPU Mode: %v", ppuInfo["ppu_mode"])
+
+	// Add screen buffer debug info
+	screenBuffer := d.emulator.GetScreenBuffer()
+	if len(screenBuffer) > 0 {
+		// Count non-zero pixels to see if anything is being rendered
+		nonZeroPixels := 0
+		for _, pixel := range screenBuffer {
+			if pixel != 0 {
+				nonZeroPixels++
+			}
+		}
+		debugText += fmt.Sprintf("\nNon-white pixels: %d", nonZeroPixels)
+
+		// Show first few pixel values
+		if len(screenBuffer) >= 10 {
+			debugText += fmt.Sprintf("\nFirst pixels: %v", screenBuffer[:10])
+		}
+	}
+
+	ebitenutil.DebugPrint(screen, debugText)
 }
 
 // Run starts the ebiten game loop

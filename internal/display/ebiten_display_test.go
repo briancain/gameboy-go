@@ -18,6 +18,14 @@ func (m *MockEmulator) StepInstruction() (int, error) {
 	return 4, nil // Return a typical instruction cycle count
 }
 
+func (m *MockEmulator) GetPPUDebugInfo() map[string]interface{} {
+	return map[string]interface{}{
+		"lcdc_enabled": true,
+		"bg_enabled":   true,
+		"lcdc_value":   0x91,
+	}
+}
+
 func (m *MockEmulator) GetScreenBuffer() []byte {
 	if m.screenBuffer == nil {
 		// Create a simple test pattern

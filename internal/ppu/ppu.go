@@ -1,5 +1,7 @@
 package ppu
 
+import "fmt"
+
 // PPU modes
 const (
 	MODE_HBLANK = 0
@@ -70,6 +72,12 @@ func NewPPU(mmu MMU) *PPU {
 		ppu.screenBuffer[i] = 0
 	}
 
+	// Initialize STAT register with correct mode
+	ppu.updateSTAT()
+
+	// Initialize LY register
+	ppu.mmu.WriteByte(0xFF44, 0)
+
 	return ppu
 }
 
@@ -83,14 +91,26 @@ func (ppu *PPU) Reset() {
 	for i := range ppu.screenBuffer {
 		ppu.screenBuffer[i] = 0
 	}
+
+	// Initialize STAT register with correct mode
+	ppu.updateSTAT()
+
+	// Initialize LY register
+	ppu.mmu.WriteByte(0xFF44, 0)
 }
 
 // Step advances the PPU by the specified number of cycles
 func (ppu *PPU) Step(cycles int) {
+	// Debug: Log PPU steps (remove this later)
+	if cycles > 0 {
+		fmt.Printf("[PPU] Step called with %d cycles, modeClock=%d, mode=%d, line=%d\n", cycles, ppu.modeClock, ppu.mode, ppu.line)
+	}
+
 	// Check if LCD is enabled
 	lcdc := ppu.mmu.ReadByte(0xFF40)
 	if (lcdc & LCDC_DISPLAY_ENABLE) == 0 {
 		// LCD is disabled
+		fmt.Printf("[PPU] LCD disabled, LCDC=0x%02X\n", lcdc)
 		return
 	}
 
@@ -102,6 +122,7 @@ func (ppu *PPU) Step(cycles int) {
 	case MODE_OAM:
 		// OAM Search - 80 cycles
 		if ppu.modeClock >= 80 {
+			fmt.Printf("[PPU] OAM->VRAM transition, modeClock=%d\n", ppu.modeClock)
 			ppu.modeClock -= 80
 			ppu.mode = MODE_VRAM
 			ppu.updateSTAT()
@@ -110,22 +131,41 @@ func (ppu *PPU) Step(cycles int) {
 	case MODE_VRAM:
 		// Pixel Transfer - 172 cycles
 		if ppu.modeClock >= 172 {
+			fmt.Printf("[PPU] VRAM->HBLANK transition, modeClock=%d\n", ppu.modeClock)
 			ppu.modeClock -= 172
 			ppu.mode = MODE_HBLANK
 			ppu.updateSTAT()
 
 			// Render scanline
+			fmt.Printf("[PPU] Rendering scanline %d\n", ppu.line)
 			ppu.renderScanline()
+
+			// Debug: Check if anything was rendered
+			nonZeroPixels := 0
+			startIdx := int(ppu.line) * SCREEN_WIDTH
+			endIdx := startIdx + SCREEN_WIDTH
+			if endIdx > len(ppu.screenBuffer) {
+				endIdx = len(ppu.screenBuffer)
+			}
+			for i := startIdx; i < endIdx; i++ {
+				if ppu.screenBuffer[i] != 0 {
+					nonZeroPixels++
+				}
+			}
+			fmt.Printf("[PPU] Scanline %d rendered %d non-zero pixels\n", ppu.line, nonZeroPixels)
 		}
 
 	case MODE_HBLANK:
 		// H-Blank - 204 cycles
 		if ppu.modeClock >= 204 {
+			fmt.Printf("[PPU] HBLANK line complete, line=%d->%d\n", ppu.line, ppu.line+1)
 			ppu.modeClock -= 204
+			oldLine := ppu.line
 			ppu.line++
 
 			// Check if we've reached the bottom of the screen
 			if ppu.line == 144 {
+				fmt.Printf("[PPU] Entering VBLANK\n")
 				ppu.mode = MODE_VBLANK
 				ppu.updateSTAT()
 
@@ -136,8 +176,14 @@ func (ppu *PPU) Step(cycles int) {
 				ppu.updateSTAT()
 			}
 
-			// Update LY register
-			ppu.mmu.WriteByte(0xFF44, ppu.line)
+			// Update LY register (use direct write to avoid reset handler)
+			fmt.Printf("[PPU] Writing LY register: %d (was %d)\n", ppu.line, oldLine)
+			if mmuWithDirect, ok := ppu.mmu.(interface{ WriteIODirect(uint16, byte) }); ok {
+				mmuWithDirect.WriteIODirect(0xFF44, ppu.line)
+			} else {
+				// Fallback: use regular write but this will trigger reset
+				ppu.mmu.WriteByte(0xFF44, ppu.line)
+			}
 
 			// Check LY=LYC coincidence
 			ppu.checkLYC()
@@ -149,8 +195,13 @@ func (ppu *PPU) Step(cycles int) {
 			ppu.modeClock -= 456
 			ppu.line++
 
-			// Update LY register
-			ppu.mmu.WriteByte(0xFF44, ppu.line)
+			// Update LY register (use direct write to avoid reset handler)
+			if mmuWithDirect, ok := ppu.mmu.(interface{ WriteIODirect(uint16, byte) }); ok {
+				mmuWithDirect.WriteIODirect(0xFF44, ppu.line)
+			} else {
+				// Fallback: use regular write but this will trigger reset
+				ppu.mmu.WriteByte(0xFF44, ppu.line)
+			}
 
 			// Check LY=LYC coincidence
 			ppu.checkLYC()
@@ -159,7 +210,12 @@ func (ppu *PPU) Step(cycles int) {
 			if ppu.line > 153 {
 				ppu.mode = MODE_OAM
 				ppu.line = 0
-				ppu.mmu.WriteByte(0xFF44, 0)
+				// Update LY register (use direct write to avoid reset handler)
+				if mmuWithDirect, ok := ppu.mmu.(interface{ WriteIODirect(uint16, byte) }); ok {
+					mmuWithDirect.WriteIODirect(0xFF44, 0)
+				} else {
+					ppu.mmu.WriteByte(0xFF44, 0)
+				}
 				ppu.updateSTAT()
 				ppu.checkLYC()
 			}
