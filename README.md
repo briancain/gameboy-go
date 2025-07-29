@@ -77,6 +77,32 @@ This will create the executable in the `bin/` directory.
 ./bin/gameboy-go -rom-file PATH_TO_ROM
 ```
 
+### Setting Up Test ROMs
+
+To properly test the emulator, you'll need to download test ROMs. These are not included in the repository due to size and licensing considerations.
+
+```bash
+# From the project root directory
+mkdir -p test/data
+cd test/data
+git clone https://github.com/retrio/gb-test-roms.git
+cd ../..
+
+# Test your emulator with Blargg's CPU instruction test
+./bin/gameboy-go -rom-file test/data/gb-test-roms/cpu_instrs/cpu_instrs.gb -debug
+
+# Test PPU rendering with the acid2 visual test
+./bin/gameboy-go -rom-file test/data/gb-test-roms/acid2.gb -scale 3
+```
+
+**Recommended Test ROMs:**
+- `cpu_instrs/cpu_instrs.gb` - Comprehensive CPU instruction test
+- `instr_timing/instr_timing.gb` - Instruction timing validation
+- `acid2.gb` - PPU rendering accuracy test
+- `dmg_sound/dmg_sound.gb` - Sound system test (for future implementation)
+
+These test ROMs are homebrew software specifically designed for emulator testing and are freely available.
+
 ### Command Line Options
 
 - `-battery-save-dir` Directory to store battery-backed save files from cartridges (e.g., game progress)
