@@ -130,8 +130,7 @@ func (ppu *PPU) Step(cycles int) {
 				ppu.updateSTAT()
 
 				// Request V-Blank interrupt
-				interruptFlag := ppu.mmu.ReadByte(0xFF0F)
-				ppu.mmu.WriteByte(0xFF0F, interruptFlag|0x01)
+				ppu.requestVBlankInterrupt()
 			} else {
 				ppu.mode = MODE_OAM
 				ppu.updateSTAT()
@@ -171,36 +170,69 @@ func (ppu *PPU) Step(cycles int) {
 // Update the STAT register based on current mode
 func (ppu *PPU) updateSTAT() {
 	stat := ppu.mmu.ReadByte(0xFF41)
+	oldMode := stat & STAT_MODE
 
 	// Clear mode bits and set new mode
 	stat &= 0xFC
 	stat |= ppu.mode
 
-	// Check if we need to request STAT interrupt
-	if ((stat&STAT_HBLANK_INT) != 0 && ppu.mode == MODE_HBLANK) ||
-		((stat&STAT_VBLANK_INT) != 0 && ppu.mode == MODE_VBLANK) ||
-		((stat&STAT_OAM_INT) != 0 && ppu.mode == MODE_OAM) {
-		// Request STAT interrupt
-		interruptFlag := ppu.mmu.ReadByte(0xFF0F)
-		ppu.mmu.WriteByte(0xFF0F, interruptFlag|0x02)
+	// Write the updated STAT register
+	ppu.mmu.WriteByte(0xFF41, stat)
+
+	// Check if we need to request STAT interrupt on mode change
+	// Only trigger interrupt on mode transitions, not every update
+	if oldMode != ppu.mode {
+		ppu.checkSTATInterrupt(stat)
+	}
+}
+
+// Check if a STAT interrupt should be triggered
+func (ppu *PPU) checkSTATInterrupt(stat byte) {
+	shouldTrigger := false
+
+	// Check each interrupt condition
+	switch ppu.mode {
+	case MODE_HBLANK:
+		shouldTrigger = (stat & STAT_HBLANK_INT) != 0
+	case MODE_VBLANK:
+		shouldTrigger = (stat & STAT_VBLANK_INT) != 0
+	case MODE_OAM:
+		shouldTrigger = (stat & STAT_OAM_INT) != 0
 	}
 
-	ppu.mmu.WriteByte(0xFF41, stat)
+	// Trigger STAT interrupt if conditions are met
+	if shouldTrigger {
+		ppu.requestSTATInterrupt()
+	}
+}
+
+// Request a STAT interrupt
+func (ppu *PPU) requestSTATInterrupt() {
+	interruptFlag := ppu.mmu.ReadByte(0xFF0F)
+	interruptFlag |= 0x02 // LCDC Status interrupt (bit 1)
+	ppu.mmu.WriteByte(0xFF0F, interruptFlag)
+}
+
+// Request a V-Blank interrupt
+func (ppu *PPU) requestVBlankInterrupt() {
+	interruptFlag := ppu.mmu.ReadByte(0xFF0F)
+	interruptFlag |= 0x01 // V-Blank interrupt (bit 0)
+	ppu.mmu.WriteByte(0xFF0F, interruptFlag)
 }
 
 // Check LY=LYC coincidence and update STAT register
 func (ppu *PPU) checkLYC() {
 	stat := ppu.mmu.ReadByte(0xFF41)
 	lyc := ppu.mmu.ReadByte(0xFF45)
+	wasCoincident := (stat & STAT_LYC_EQUAL) != 0
 
 	if ppu.line == lyc {
 		// Set coincidence flag
 		stat |= STAT_LYC_EQUAL
 
-		// Check if we need to request STAT interrupt
-		if (stat & STAT_LYC_INT) != 0 {
-			interruptFlag := ppu.mmu.ReadByte(0xFF0F)
-			ppu.mmu.WriteByte(0xFF0F, interruptFlag|0x02)
+		// Check if we need to request STAT interrupt (only on transition to coincident)
+		if !wasCoincident && (stat&STAT_LYC_INT) != 0 {
+			ppu.requestSTATInterrupt()
 		}
 	} else {
 		// Clear coincidence flag
